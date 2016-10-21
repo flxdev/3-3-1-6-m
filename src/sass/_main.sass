@@ -956,6 +956,47 @@ body
 			max-width: 90%
 			span
 				opacity: 0.2
+
+.cap 
+	position: absolute
+	z-index: 999
+	top: 0
+	left: 0
+	right: 0
+	bottom: 0
+	background-color: $black
+	display: none
+	.cap-inner 
+		+rem(width, 230px)
+		position: absolute
+		top: 50%
+		left: 50%
+		transform: translate(-50%, -50%)
+		text-align: center
+		.image
+			background-image: url(../img/icons/desktop.png)
+			+rem(width, 98px)
+			+rem(height, 81px)
+			display: inline-block
+			background-size: cover
+			+rem(margin-bottom, 30px)
+		p 
+			// font-family: $GramondProItalic
+			color: $white;
+			+rem(font-size, 16px)
+			+rem(margin-bottom, 15px)
+			+rem(letter-spacing, 2.5px)
+		a 
+			+rem(font-size, 10px)
+			text-transform: uppercase
+			+rem(letter-spacing, 2.5px)
+			color: $black;
+			position: relative;
+			background-color: $white;
+			padding: 8px 25px;
+			letter-spacing: 1.3px;
+	+rm(992)
+		display: block
 .load-page
 	opacity: 1
 
