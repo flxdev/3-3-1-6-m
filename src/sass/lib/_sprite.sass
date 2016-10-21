@@ -1,0 +1,86 @@
+$icons: (0:0)
+$icons: map-merge($icons,(arrow-bottom: (X: -128px, Y:-104px, W: 16px, H: 28px, TW: 227px, TH: 176px, IMG: '../img/icons.png')))
+$icons: map-merge($icons,(arrow-right-white: (X: -148px, Y:-104px, W: 28px, H: 16px, TW: 227px, TH: 176px, IMG: '../img/icons.png')))
+$icons: map-merge($icons,(arrow-top: (X: 0px, Y:-148px, W: 16px, H: 28px, TW: 227px, TH: 176px, IMG: '../img/icons.png')))
+$icons: map-merge($icons,(baloon: (X: -164px, Y:0px, W: 63px, H: 92px, TW: 227px, TH: 176px, IMG: '../img/icons.png')))
+$icons: map-merge($icons,(eye: (X: 0px, Y:0px, W: 160px, H: 100px, TW: 227px, TH: 176px, IMG: '../img/icons.png')))
+$icons: map-merge($icons,(pagin-four: (X: 0px, Y:-104px, W: 60px, H: 40px, TW: 227px, TH: 176px, IMG: '../img/icons.png')))
+$icons: map-merge($icons,(pagin-two: (X: -64px, Y:-104px, W: 60px, H: 40px, TW: 227px, TH: 176px, IMG: '../img/icons.png')))
+
+
+// Gets an attribute from the sass map
+@function icon-attr($icon, $attr)
+	$icon: map-get($icons, $icon)
+	@return map-get($icon, $attr)
+
+@mixin sprite($iconName)
+	background-image: url(icon-attr($iconName, IMG))
+	width: icon-attr($iconName, W)
+	height: icon-attr($iconName, H)
+	background-position: icon-attr($iconName, X) icon-attr($iconName, Y)
+@mixin sprite-position($iconName)
+	background-position: icon-attr($iconName, X) icon-attr($iconName, Y)
+@mixin sprite-retina($iconName)
+	background-image: url(icon-attr($iconName, IMG))
+	$width: icon-attr($iconName, W)
+	$height: icon-attr($iconName, H)
+	width: $width/2
+	height: $height/2
+	$x: icon-attr($iconName, X)
+	$y: icon-attr($iconName, Y)
+	background-position: $x/2 $y/2
+	$tw: icon-attr($iconName, TW) 	
+	$th: icon-attr($iconName, TH)
+	background-size: $tw/2 $th/2  	
+
+
+@mixin s($i)
+	+sprite($i)
+@mixin sp($i)
+	+sprite-position($i)
+@mixin sr($i)
+	+sprite-retina($i)	
+
+//
+//.icon-arrow-bottom
+//	width: 16px
+//	height: 28px
+//	background-image: url('../img/icons.png')
+//	background-position: -128px -104px
+//
+//.icon-arrow-right-white
+//	width: 28px
+//	height: 16px
+//	background-image: url('../img/icons.png')
+//	background-position: -148px -104px
+//
+//.icon-arrow-top
+//	width: 16px
+//	height: 28px
+//	background-image: url('../img/icons.png')
+//	background-position: 0px -148px
+//
+//.icon-baloon
+//	width: 63px
+//	height: 92px
+//	background-image: url('../img/icons.png')
+//	background-position: -164px 0px
+//
+//.icon-eye
+//	width: 160px
+//	height: 100px
+//	background-image: url('../img/icons.png')
+//	background-position: 0px 0px
+//
+//.icon-pagin-four
+//	width: 60px
+//	height: 40px
+//	background-image: url('../img/icons.png')
+//	background-position: 0px -104px
+//
+//.icon-pagin-two
+//	width: 60px
+//	height: 40px
+//	background-image: url('../img/icons.png')
+//	background-position: -64px -104px
+//

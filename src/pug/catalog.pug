@@ -1,0 +1,70 @@
+extends _layout
+
+block title
+	title Catalog
+
+block content
+	.wrapper
+		.scroll
+			include includes/_burger
+			.content.content-catalog(data-page="catalog")
+				include includes/_header
+				.content-wrapper
+					.content-head
+						.text-container
+							.title Catalog
+							.subtitle
+								| Sort by:
+							.descr
+								.project-sorting
+									- var curr = "All projects"
+									mixin sort(sort, name)
+										a.sort.ajax-trigger(class={active: name === curr} href="#" data-filter=sort)
+											span #{name}
+									+sort("*", "All projects")
+									+sort(".houses", "Houses")
+									+sort(".interiors", "Interiors")
+									+sort(".layouts", "Layouts")
+					.content-body
+						.scroller-gallery.scroller-gallery__project
+							.scroller-container
+								ul.grid.grid-sort
+									mixin gridItem(link, hash, name, area, price)
+										li(class="load")
+											a
+												.image__cover
+													img(src=link)
+												.projects-hash
+													span(class="hash-item") ##{hash}
+												.descr
+													.name #{name}
+													.prop
+														.prop-sq #{area}m
+															sup 2
+														.prop-price #{price}$
+									+gridItem("img/grid/grid-1.jpg", "layouts", "House#1", "105", "2 500")
+									+gridItem("img/grid/grid-1.jpg", "interiors", "Interior#1", "53", "3 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "205", "4 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "105", "2 500")
+									+gridItem("img/grid/grid-1.jpg", "layouts", "Interior#1", "53", "3 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "205", "4 000")
+									+gridItem("img/grid/grid-1.jpg", "layouts", "House#1", "105", "2 500")
+									+gridItem("img/grid/grid-1.jpg", "interiors", "Interior#1", "53", "3 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "205", "4 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "105", "2 500")
+									+gridItem("img/grid/grid-1.jpg", "layouts", "Interior#1", "53", "3 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "205", "4 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "105", "2 500")
+									+gridItem("img/grid/grid-1.jpg", "interiors", "Interior#1", "53", "3 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "205", "4 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "105", "2 500")
+									+gridItem("img/grid/grid-1.jpg", "interiors", "Interior#1", "53", "3 000")
+									+gridItem("img/grid/grid-1.jpg", "layouts", "House#1", "205", "4 000")
+									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "105", "2 500")
+									+gridItem("img/grid/grid-1.jpg", "interiors", "Interior#1", "53", "3 000")
+									+gridItem("img/grid/grid-1.jpg", "layouts", "House#1", "205", "4 000")
+				- var name = "services"
+				include includes/_footer
+		- var current = "Catalog"
+		include includes/_menu
+		include includes/_popup

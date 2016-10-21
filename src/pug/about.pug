@@ -1,0 +1,69 @@
+extends _layout
+
+block title
+	title About
+
+block content
+	.wrapper
+		.scroll
+			include includes/_burger
+			.content.content-main(data-page="main")
+				include includes/_header
+				.content-wrapper
+					.content-head
+						.text-container
+							.title Portfolio
+							.image__cover
+								img(src="img/about.jpg")
+							.descr
+								p
+									| Architectural bureau 33|16 was founded in 2009 by architects Oleg Kapustin and Evgenii Daineko. The Bureau operates on the international market in the field of archi&shy;tecture, interior design, landscape design and project management of projects. To date, the company employs 25 staff, geography projects involves Belarus, Russia and Europe.
+					.content-body
+						.people
+							.people-item
+								.text-container
+									.title Oleg Kapustin
+									.subtitle Founder and Director
+									.descr
+										p
+											| A talented architect, a great leader and a wonderful person with a capital letter. He graduated from the Minsk Art School named after Glebov. Since 2009 Chief Founders architectural bureau 33 | 16.
+								.image__cover
+									img(src="img/ceo-1.jpg")
+							.people-item
+								.text-container
+									.title Evgenii Daineko
+									.subtitle Founder and Director
+									.descr
+										p
+											| A talented architect, a great leader and a wonderful person with a capital letter. He graduated from the Minsk Art School named after Glebov. Since 2009 Chief Founders architectural bureau 33 | 16.
+								.image__cover
+									img(src="img/ceo-2.jpg")
+						.clients
+							.text-container
+								.title Our clients
+								.subtitle OUR WORK introduces us to the amazing people.
+								.descr
+									p
+										| Our clients are bold and successful people, businessmen and stars of show business, stores and restaurants. All of our clients have in common - they are bold and modern, they like to stay ahead of trends and work with the best.
+							.clients-list
+								mixin Clients(name)
+									a(class="clients__item ajax-trigger" href="#")
+										span #{name}
+								+Clients("#Cafe Balkon")
+								+Clients("#Karim Rashid")
+								+Clients("#Café de Paris")
+								+Clients("#Cafe Milano")
+								+Clients("#Rialto")
+								+Clients("#Tapas bar")
+								+Clients("#JELSOMINO")
+								+Clients("#Bogema")
+								+Clients("#Grand Cafe")
+								+Clients("#Café de Paris")
+								+Clients("#Galileo Mall")
+								+Clients("#Wargaming")
+								+Clients("#Café de Paris")
+				- var name = "services"
+				include includes/_footer
+		- var current = "Bureau"
+		include includes/_menu
+		include includes/_popup

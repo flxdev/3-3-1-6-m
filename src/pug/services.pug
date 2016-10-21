@@ -1,0 +1,41 @@
+extends _layout
+
+block title
+	title Services
+
+block content
+	.wrapper
+		.scroll
+			include includes/_burger
+			.content.content-services(data-page="services")
+				include includes/_header
+				.content-wrapper
+					.content-body
+						.services
+							.services-item
+								.text-container
+									.title 
+										| Architectural 
+										br
+										| design 
+										span #01
+									.subtitle
+										| Cottages, houses.
+									.descr
+										p We design buildings so that every square meter justified himself. We create a vibrant, living ar&shy;chitecture. Places in which want to come back.
+							.services-item
+								.text-container
+									.title 
+										| Interior 
+										br
+										| design 
+										span #02
+									.subtitle
+										| Private and public premises.
+									.descr
+										p We create interior designs using simple shapes and volumes, correct proportions and original items. We help you to find a harmonious and unique style. We are living design, making it comfortable to live.
+				- var name = "services"
+				include includes/_footer
+		- var current = "Services"
+		include includes/_menu
+		include includes/_popup

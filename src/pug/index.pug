@@ -1,0 +1,41 @@
+extends _layout
+
+block title
+	title Index
+
+block content
+	.wrapper
+		.scroll
+			include includes/_burger
+			.content.content-main(data-page="main")
+				include includes/_header
+				.content-wrapper
+					.content-head
+						.intro
+							.intro-text Architecture. Interior. Design.
+					.content-body
+						.projects
+							mixin projects(image, name)
+								a.projects-item.ajax-trigger(href="#")
+									.project-info-contaner
+										.cover
+											.project-info__inner
+												.projects-image
+													img(src=image)
+												.projects-info
+														.projects-name
+															span #{name}
+							+projects("img/main/1_2.jpg", "Café de Paris")
+							+projects("img/main/6_2.jpg", "Private house #03")
+							+projects("img/main/10_2.jpg", "Café de Paris")
+							+projects("img/main/15_2.jpg", "Private house #04")
+							+projects("img/main/19_2.jpg", "Café de Paris")
+							+projects("img/main/23_2.jpg", "Private house #05")
+							+projects("img/main/28_2.jpg", "Café de Paris")
+							+projects("img/main/30_2.jpg", "Private house #06")
+				- var name = "Portfolio"
+				include includes/_footer
+		- var current = "Recent projects"
+		include includes/_menu
+		include includes/_popup
+		

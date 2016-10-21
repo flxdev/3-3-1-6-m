@@ -1,0 +1,71 @@
+extends _layout
+
+block title
+	title Portfolio inner
+
+block content
+	.wrapper
+		.scroll
+			include includes/_burger
+			.content.content-portfolio-inner(data-page="portfolio-inner")
+				include includes/_header
+				.content-wrapper
+					.content-head
+						.text-container
+							.title Café de Paris
+							.image__cover
+								img(src="img/portfolio-title.jpg")
+							.subtitle
+								| Interior design for a part of France in Minsk
+							.descr
+								p
+									| It's not boring solemnity, not pomp&shy;ous luxury, not flashy kitsch. This is a very subtle and elegant chic with the created image.
+					.content-body
+						.text-container
+							.title Gallery
+						.projects-gallery
+							.scroller-gallery
+								ul.grid#l-gallery
+									mixin gridItem(link)
+										li(class="load" data-src=link)
+											a
+												.image__cover
+													img(src=link)
+									+gridItem("img/grid/grid-1.jpg")
+									+gridItem("img/grid/grid-2.jpg")
+									+gridItem("img/grid/grid-3.jpg")
+									+gridItem("img/grid/grid-4.jpg")
+									+gridItem("img/grid/grid-5.jpg")
+									+gridItem("img/grid/grid-6.jpg")
+									+gridItem("img/grid/grid-7.jpg")
+									+gridItem("img/grid/grid-8.jpg")
+									+gridItem("img/grid/grid-9.jpg")
+									+gridItem("img/grid/grid-10.jpg")
+									+gridItem("img/grid/grid-11.jpg")
+									+gridItem("img/grid/grid-12.jpg")
+									+gridItem("img/grid/grid-13.jpg")
+									+gridItem("img/grid/grid-14.jpg")
+									+gridItem("img/grid/grid-1.jpg")
+									+gridItem("img/grid/grid-2.jpg")
+									+gridItem("img/grid/grid-3.jpg")
+									+gridItem("img/grid/grid-4.jpg")
+									+gridItem("img/grid/grid-5.jpg")
+									+gridItem("img/grid/grid-6.jpg")
+									+gridItem("img/grid/grid-7.jpg")
+									+gridItem("img/grid/grid-8.jpg")
+									+gridItem("img/grid/grid-9.jpg")
+									+gridItem("img/grid/grid-10.jpg")
+									+gridItem("img/grid/grid-11.jpg")
+									+gridItem("img/grid/grid-12.jpg")
+									+gridItem("img/grid/grid-13.jpg")
+									+gridItem("img/grid/grid-14.jpg")
+							script(type='text/javascript').
+								//- window.onload = function() {
+									$(iso)
+									$(lightG)
+								//- }
+				- var name = "services"
+				include includes/_footer
+		- var current = "Portfolio"
+		include includes/_menu
+		include includes/_popup

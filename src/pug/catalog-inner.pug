@@ -1,0 +1,60 @@
+extends _layout
+
+block title
+	title Catalog inner
+
+block content
+	.wrapper
+		.scroll
+			include includes/_burger
+			.content.content-catalog(data-page="catalog")
+				include includes/_header
+				.content-wrapper
+					.content-head
+						.text-container
+							.title House#1
+							.subtitle
+								| The project house in the style of&nbsp;minimalism 
+							.descr
+								p Area: 105m2
+								p Cost: 25 000$
+								a.btn.btn-black(href="#" data-modal="order")
+									span order project
+					.content-body
+						.scroller-gallery.scroller-gallery__project
+							.scroller-container
+								ul.grid.grid-line-two#l-gallery
+									mixin gridItem(link, hash, name, area, price)
+										li(class="load" data-src=link)
+											a
+												.image__cover
+													img(src=link)
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-15.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+									+gridItem("img/grid/grid-16.jpg")
+							script(type='text/javascript').
+								$(iso)
+								$(lightG)
+				- var name = "services"
+				include includes/_footer
+		- var current = "Catalog"
+		include includes/_menu
+		include includes/_popup
