@@ -110,10 +110,12 @@ customScroll.prototype.init = function() {
 	this.scroll = new IScroll(self.el, {
 		bounce: false,
 		click: true,
-		mouseWheel: true
+		mouseWheel: true,
+		probeType: 2
 	});
-	if(this.el == '.wrapper') {
-		// this.endscroll();
+
+	if(this.el == ".wrapper") {
+		self.endscroll();
 	}
 	
 }
@@ -133,12 +135,13 @@ customScroll.prototype.scrollUp = function(){
 customScroll.prototype.endscroll = function() {
 	var self = this;
 	this.scroll.on("scrollEnd", function() {
-		console.log(this.y, Math.round(-$(self.el).find(".scroll").innerHeight() + 667))
-		if(this.y == Math.round(-$(self.el).find(".scroll").innerHeight() + 667)){
-			console.log(this.y)
+		if($("#news-template").length) {
+			fb.scrollEvents(-this.y, self.el);
 		}
 	})
 }
+
+
 
 function iso() {
 	var container = document.getElementById("scroll-container"),
@@ -348,6 +351,145 @@ window.onload = function() {
 	scrollPopupInit = new customScroll(scrollPopup);
 	scrollModalInit = new customScroll(scrollModal);
 	document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+}
+
+function FacebookFeeds(el) {
+	this._el = el;
+	this._init();
+};
+
+FacebookFeeds.prototype._init = function() {
+	this.current = 0;
+
+	_data = {
+		appId: '1769497983310854',
+		app_secret: '5a35ff4cd940ade96313a26c621f2a28',
+		group: '3316Architects',
+		fields: {},
+		onPage: 8,
+		startPage: 8,
+		contPage: 8
+	};
+
+	this.res;
+	this.conteiner = $("#news-template");
+	this.initEvent();
+};
+
+FacebookFeeds.prototype.initEvent = function() {
+
+}
+
+FacebookFeeds.prototype.scrollEvents = function(posY, element) {
+	var self = this;
+
+	this.position = posY;
+	this.docAll = $(element).find(".scroll").outerHeight() - $(element).height() - $(element).height() / 2;
+
+	if(this.position > this.docAll) {
+		++self.current;
+		self.filterObject(self.current)
+	}
+}
+
+FacebookFeeds.prototype.getData = function(type, fields){
+	var self = this;
+	_data.fields = fields.split(',');
+
+	var send_data = {
+		fields: fields,
+		access_token: _data.appId + '|' + _data.app_secret,
+		limit: 100
+	};
+
+	$.ajax({
+		url: 'https://graph.facebook.com/' + _data.group + '/' + type,
+		data: send_data,
+		success: function(res) {
+			self.res = res;
+			self.filterObject();
+		}
+	});
+};
+
+FacebookFeeds.prototype.filterObject = function(current) {
+	var curr = current || 0;
+	var _keys = Object.keys(this.res.data);
+	this.resDate = [];
+
+	this.start = (curr-1) * _data.onPage + _data.contPage ;
+	this.end = this.start + _data.onPage - 1;
+	this.template = '#facebook_template';
+
+	for(var i = this.start; i <= this.end; i++) {
+		if(typeof _keys[i] != 'undefined')
+			this.resDate.push(this.res.data[_keys[i]]);
+		else 
+			break;
+	}
+
+	this.setData(this.resDate, this.template);
+}
+
+FacebookFeeds.prototype.convertDate = function(date) {
+	var pStr = date.split('T'),
+		pDate = pStr[0].split('-'),
+		MonthList = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'],
+		moth = pDate[1],
+		textMonth = MonthList[moth - 1],
+		day = pDate[2]
+
+	return day + ' ' + textMonth
+};
+
+FacebookFeeds.prototype.setData = function(results, template) {
+	var self = this;
+
+	this.obj_result = results;
+	this._htmlTemplate = $(template);
+	this.main = '';
+
+	$.each(this.obj_result, function(index, element) {
+
+		self.templates = self._htmlTemplate.html();
+
+		
+
+		if(typeof element.comments == 'object') {
+			element.comment = element.comments.data.length;
+		} else if(typeof element.comments == 'undefined') {
+			element.comment = 0;
+		}
+
+		if(typeof element.likes == 'object'){
+			element.like = element.likes.data.length;
+		} else if(typeof element.likes == 'undefined') {
+			element.like = 0;
+		}
+
+		if(typeof element.name == 'undefined')
+			element.name = '';
+
+		element.convert_time = self.convertDate(element.created_time);
+
+		$.each(element, function(code, value) {
+			self.templates = self.templates.replace(new RegExp('#'+code+'#', "g"), value);
+		});
+		self.main += self.templates
+	});
+	self.appendTemplate(this.main, this.current);
+}
+
+FacebookFeeds.prototype.appendTemplate = function(template, curr) {
+	var self = this;
+
+	this.templateCover = document.createElement("div");
+	this.templateCover.classList.add("gallery-news__cover");
+	this.conteiner.append(this.templateCover)
+	
+	this.conteiner.removeClass("fPage");
+	$(this.templateCover).append(template);
+	mainScrollInit.update();
 }
 
 $(document).ready(function(){	

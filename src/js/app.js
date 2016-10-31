@@ -5,4 +5,5 @@
 //=include lib/modernizr.js
 //=include lib/TimelineLite.min.js
 //=include lib/iscroll.js
+//=include lib/iscroll-probe.js
 //=include common.js
