@@ -23,22 +23,14 @@
       <div class="frame frame-bottom"></div>
       <div class="timeline"></div>
     </div>
-    <div class="pageLoader">
-      <div class="lines-container">
-        <div class="lines">
-          <div class="line"></div>
-          <div class="line"></div>
-          <div class="line"></div>
-        </div>
-      </div>
-    </div>
+    <div class="pageLoader"><i class="loader-item"></i></div>
     <div class="pageSurfLoader">
       <div class="loader"></div>
     </div>
     <!--BEGIN out-->
-    <div class="out">
+    <div class="out" id="touch">
       <div class="wrapper">
-        <div class="scroll">
+        <div class="scroll" id="out">
           <div class="hamburger">
             <div class="hamburger-inner"><span></span><span></span><span></span></div>
           </div>
@@ -115,7 +107,7 @@
                     $(iso)
                     $(lightG)
                   </script>
-                </div>
+                </div><a class="back-page ajax-trigger"><i></i>Back to all projects</a>
               </div>
             </div>
             <footer class="footer">
@@ -127,7 +119,8 @@
                   <div class="name">Kuibysheva 33|16 kiseleva</div>
                 </div>
                 <div class="footer-item"><a class="develop" href="flxmd.by" target="_blank" rel="nofollow">by #flxmd</a></div>
-              </div><a class="ajax-trigger nav-page-button"><span>Push to services</span></a>
+              </div>
+              <div class="nav-page-button" data-href="services"><span>Pull up to services</span></div>
             </footer>
           </div>
         </div>
@@ -196,5 +189,6 @@
         <p>Please, switch to&nbsp;the&nbsp;desktop version</p><a href="#">Switch</a>
       </div>
     </div>
+    <div class="pan-loader" id="pan-loader"><span class="container-rotate" id="rotate"><i class="rotate-item"></i></span></div>
   </body>
 </html>

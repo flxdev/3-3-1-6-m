@@ -18,7 +18,7 @@ html
   body
     include includes/_preloader-main
     //BEGIN out
-    .out
+    .out#touch
       block content
     //END out
     .cap
@@ -26,3 +26,6 @@ html
         .image
         p Please, switch to&nbsp;the&nbsp;desktop version
         a(href="#") Switch
+    .pan-loader#pan-loader
+      span.container-rotate#rotate
+        i.rotate-item

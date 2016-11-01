@@ -5,7 +5,7 @@ block title
 
 block content
 	.wrapper
-		.scroll
+		.scroll#out
 			include includes/_burger
 			.content.content-catalog(data-page="catalog")
 				include includes/_header
@@ -53,6 +53,9 @@ block content
 							script(type='text/javascript').
 								$(iso)
 								$(lightG)
+						a(class="back-page ajax-trigger")
+							i
+							| Back to all projects
 				- var name = "services"
 				include includes/_footer
 		- var current = "Catalog"

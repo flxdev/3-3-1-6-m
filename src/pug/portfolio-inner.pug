@@ -5,7 +5,7 @@ block title
 
 block content
 	.wrapper
-		.scroll
+		.scroll#out
 			include includes/_burger
 			.content.content-portfolio-inner(data-page="portfolio-inner")
 				include includes/_header
@@ -60,10 +60,11 @@ block content
 									+gridItem("img/grid/grid-13.jpg")
 									+gridItem("img/grid/grid-14.jpg")
 							script(type='text/javascript').
-								//- window.onload = function() {
-									$(iso)
-									$(lightG)
-								//- }
+								$(iso)
+								$(lightG)
+						a(class="back-page ajax-trigger")
+							i
+							| Back to all projects
 				- var name = "services"
 				include includes/_footer
 		- var current = "Portfolio"

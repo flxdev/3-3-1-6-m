@@ -6,4 +6,5 @@
 //=include lib/TimelineLite.min.js
 //=include lib/iscroll.js
 //=include lib/iscroll-probe.js
+//=include lib/hammer.2.0.4.js
 //=include common.js
