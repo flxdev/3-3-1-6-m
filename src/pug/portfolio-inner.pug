@@ -60,8 +60,10 @@ block content
 									+gridItem("img/grid/grid-13.jpg")
 									+gridItem("img/grid/grid-14.jpg")
 							script(type='text/javascript').
-								$(iso)
-								$(lightG)
+								document.addEventListener("DOMContentLoaded", function(){
+									$(iso)
+									$(lightG)
+								})
 						a(class="back-page ajax-trigger")
 							i
 							| Back to all projects

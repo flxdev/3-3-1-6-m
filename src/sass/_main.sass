@@ -32,6 +32,16 @@ body
 	height: 100%
 	opacity: 0
 	transition: 1.2s opacity $cub
+	background-color: $white
+	position: relative
+	&::after
+		content: ''
+		height: 600px
+		background-color: $black
+		position: absolute
+		bottom: -600px
+		left: 0
+		width: 100%
 .wrapper
 	position: relative
 	+rem(padding, 0 15px)
@@ -68,20 +78,20 @@ body
 	+rem(margin-top, 15px)
 	display: inline-block
 	vertical-align: top
-	+rem(max-width, 150px)
-	width: 100%
+	// +rem(max-width, 150px)
+	width: calc(100% - 8.5625rem)
 	// transition: transform 1.2s $cub 0.3s
 	// transform: translate(0,-60px)
 	li
 		display: inline-block
 		vertical-align: middle
-		&:not(:last-of-type)
+		&:not(:first-of-type)
 			&::after
 				content: '/'
 				font-family: "Book"
 				position: absolute
 				top: 0
-				right: -19px
+				left: -19px
 				+rem(font-size, 16px)
 		+rem(margin-left, 25px)
 		position: relative
@@ -109,7 +119,7 @@ body
 		+rem(letter-spacing, 1px)
 .nav-page-button
 	position: absolute
-	bottom: 0
+	bottom: -1px
 	+rem(height, 63px)
 	background-color: $black
 	display: inline-block
@@ -553,7 +563,7 @@ body
 	bottom: 0
 	right: 0
 	z-index: 500
-	display: none
+	// display: none
 	.frame
 		position: absolute
 		left: 0
@@ -1178,24 +1188,28 @@ body
 	.container-rotate
 		+rem(width, 20px)
 		+rem(height, 20px)
-		+rem(margin, 23px 0)
+		// +rem(margin, 23px 0)
 		display: inline-block
 		.rotate-item
 			display: block
 			border: 2px solid $black
 			+rem(width, 20px)
 			+rem(height, 20px)
+		.outer
+			transform: rotate(-90deg)
+			transform-origin: 50%
 .loading
 	.out, .pan-loader
 		transform: translate(0, -3.9375em)
-	.rotate-item
-		animation: rotation 2s cubic-bezier(0.645, 0.045, 0.355, 1) infinite
+		transition: transform 0.3s ease
+	.outer
+		animation: rotation 4s cubic-bezier(0.645, 0.045, 0.355, 1) both
 
 @keyframes rotation
 	0%
-		transform: rotate(0)
+		stroke-dashoffset: 0
 	100%
-		transform: rotate(360deg)
+		stroke-dashoffset: 10
 
 .load-page
 	opacity: 1
