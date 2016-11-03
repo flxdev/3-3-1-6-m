@@ -34,6 +34,11 @@ body
 	transition: 1.2s opacity $cub
 	background-color: $white
 	position: relative
+	transition: opacity 0.5s ease
+.wrapper
+	position: relative
+	+rem(padding, 0 15px)
+	height: 100%
 	&::after
 		content: ''
 		height: 600px
@@ -42,12 +47,8 @@ body
 		bottom: -600px
 		left: 0
 		width: 100%
-.wrapper
-	position: relative
-	+rem(padding, 0 15px)
-	height: 100%
-.wrapper
-	transition: transform 0.5s ease, opacity 0.4s ease
+.wrapper, .pan-loader
+	transition: opacity 0.4s ease
 	&.ajax
 		opacity: 0
 .scroll
@@ -471,64 +472,6 @@ body
 			text-transform: uppercase
 			+rem(letter-spacing, 2.5px)
 			transition: color 0.3s ease
-// .pageLoader
-// 	position: fixed
-// 	top: 0
-// 	left: 0
-// 	width: 100%
-// 	height: 100%
-// 	z-index: 19
-// 	opacity: 0
-// 	visibility: hidden
-// 	transition: opacity 0s ease 0s, visibility 0s ease 0s
-// 	// display: none
-// 	&.is-loader
-// 		// display: block
-// 		opacity: 1
-// 		visibility: visible
-// 		transition-delay: 0.5s
-// 		transition-duration: 0.5s
-// 		.lines-container
-// 			.lines
-// 				.line
-// 					&::before
-// 						animation: loading-scale 2s cubic-bezier(0.645, 0.045, 0.355, 1) 0s infinite normal none
-// 	.lines-container
-// 		position: absolute
-// 		+rem(width, 70px)
-// 		+rem(height, 40px)
-// 		+rem(margin, -20px 0 0 -35px)
-// 		left: 50%
-// 		top: 50%
-// 		.lines
-// 			position: relative
-// 			+rem(width, 70px)
-// 			+rem(height, 40px)
-// 			.line
-// 				overflow: hidden
-// 				width: 100%
-// 				+rem(height, 2px)
-// 				transform-origin: 0 100%
-// 				position: absolute
-// 				&:nth-child(1)
-// 					top: 0
-// 					&:before
-// 						animation-delay: 0.3s
-// 				&:nth-child(2)
-// 					top: 18px
-// 				&:nth-child(3)
-// 					bottom: 0
-// 					&:before
-// 						animation-delay: 0.15s
-// 				&::before
-// 					content: ""
-// 					background-color: $black
-// 					left: 0
-// 					display: block
-// 					position: absolute
-// 					width: 100%
-// 					height: 100%
-
 .pageLoader
 	position: fixed
 	top: 0
@@ -546,16 +489,47 @@ body
 		visibility: visible
 		transition-delay: 0.5s
 		transition-duration: 0.5s
-		.loader-item
-			animation: rotation 2s cubic-bezier(0.645, 0.045, 0.355, 1) 0s infinite normal none
-	.loader-item
+		.lines-container
+			.lines
+				.line
+					&::before
+						animation: loading-scale 2s cubic-bezier(0.645, 0.045, 0.355, 1) 0s infinite normal none
+	.lines-container
 		position: absolute
-		+rem(width, 20px)
-		+rem(height, 20px)
-		+rem(margin, -10px 0 0 -10px)
+		width: 70px
+		height: 38px
+		+rem(margin, -20px 0 0 -35px)
 		left: 50%
 		top: 50%
-		border: 2px solid $black
+		.lines
+			position: relative
+			width: 70px
+			height: 38px
+			.line
+				overflow: hidden
+				width: 100%
+				height: 2px
+				transform-origin: 0 100%
+				position: absolute
+				&:nth-child(1)
+					top: 0
+					&:before
+						animation-delay: 0.3s
+				&:nth-child(2)
+					top: 18px
+				&:nth-child(3)
+					bottom: 0
+					&:before
+						animation-delay: 0.15s
+				&::before
+					content: ""
+					background-color: $black
+					left: 0
+					display: block
+					position: absolute
+					width: 100%
+					height: 100%
+
 .siteLoader
 	position: fixed
 	top: 0
@@ -1186,10 +1160,14 @@ body
 	+rem(bottom, -63px)
 	text-align: center
 	.container-rotate
-		+rem(width, 20px)
-		+rem(height, 20px)
-		// +rem(margin, 23px 0)
+		position: absolute
+		top: 0%
+		left: 50%
+		width: 20px
+		height: 20px
+		margin: 0px 0 0 -10px
 		display: inline-block
+		transform-origin: 50% 50%
 		.rotate-item
 			display: block
 			border: 2px solid $black
@@ -1197,13 +1175,15 @@ body
 			+rem(height, 20px)
 		.outer
 			transform: rotate(-90deg)
-			transform-origin: 50%
+			transform-origin: 50% 50%
 .loading
 	.out, .pan-loader
 		transform: translate(0, -3.9375em)
 		transition: transform 0.3s ease
+	.container-rotate
+		animation: rotationContainer 0.5s linear infinite
 	.outer
-		animation: rotation 4s cubic-bezier(0.645, 0.045, 0.355, 1) both
+		animation: rotation 0.5s cubic-bezier(0.645, 0.045, 0.355, 1) both
 
 @keyframes rotation
 	0%
@@ -1211,8 +1191,15 @@ body
 	100%
 		stroke-dashoffset: 10
 
+@keyframes rotationContainer
+	0%
+		transform: rotate(0)
+	100%
+		transform: rotate(360deg)
+
 .load-page
 	opacity: 1
+	transition: opacity 0.5s ease
 
 	// .logo
 	// 	transform: none

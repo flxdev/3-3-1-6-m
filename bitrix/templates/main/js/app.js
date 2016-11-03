@@ -4678,7 +4678,7 @@ var hidePageLoader = function() {
 		loader.find(".line").css({
 			transform: ''
 		});
-		$(".header, .wrapper").removeClass("ajax")
+		$(".pan-loader, .wrapper").removeClass("ajax");
 		loader.removeClass("is-loader");
 		$(".out").addClass("load-page");
 		_doReset();
@@ -4803,11 +4803,7 @@ var PullMobile = function(){
 		document.getElementById('touch').style.webkitTransform = '';
 		document.getElementById('pan-loader').style.webkitTransform = '';
 
-		if(document.body.classList.contains("ptr-refresh")) {
-			self._doLoading();
-		}
-
-		// pan.idLoading = false;
+		pan.isLoading = false;
 		pan.distance = 0;
 		pan.enabled = false;
 
@@ -4824,11 +4820,12 @@ var PullMobile = function(){
 	this._setBodyClass = function() {
 		if ( pan.distance > options.distanceToRefresh ) {
 			bodyClass.add( 'ptr-refresh' );
+			
 			if(!pan.isLoading){
 				self._doLoading();
 				pan.isLoading = true;
 			}
-			
+
 			document.getElementById('touch').style.webkitTransform = '';
 			document.getElementById('pan-loader').style.webkitTransform = '';
 		}
@@ -4837,10 +4834,9 @@ var PullMobile = function(){
 
 	this._doLoading = function(){
 		bodyClass.add('loading');
-		console.log(true)
 		setTimeout(function(){
 			ajaxLoader($(".nav-page-button"))
-		}, 2500);			
+		}, 1500);			
 	};
 };
 
@@ -5068,31 +5064,37 @@ $(document).ready(function(){
 
 	} mobileMenu();
 });
-function actionLoadPage() {
+function actionLoadPage(duration) {
 	$(".wrapper").addClass("return");
-	$(".header, .wrapper").addClass("ajax");
+	$(".pan-loader, .wrapper").addClass("ajax");
 	// showPageLoader()
-	$(".out").removeClass("load-page");
+	// $(".out").removeClass("load-page");
 
 	setTimeout(function(){
 		hidePageLoader();
 		bindEventScroll();
-	},2000);
+	},duration);
 }
+$.fn.hasAttr = function(name) {
+   return this.attr(name) !== undefined;
+};
 function ajaxLoader(link) {
 	var hrefValue = $(link).attr("href") || $(link).data("href");
-	// console.log(true)
-	// $.ajax({
-	// 	url: hrefValue,
-	// 	datatype: "html",
-	// 	beforeSend: function() {
-	// 		actionLoadPage();
-	// 		showPageLoader()
-	// 	},
-	// 	success: function(content) {
-	// 		// var cont = $(content).find("content");
-	// 		window.history.pushState("page" + hrefValue, hrefValue, hrefValue);
-	// 		window.history.replaceState("page" + hrefValue, hrefValue, hrefValue);			
-	// 	}
-	// })
+	$.ajax({
+		url: hrefValue,
+		datatype: "html",
+		beforeSend: function() {
+			if(link.hasAttr('href')){
+				showPageLoader();
+				actionLoadPage(2000);
+			} else {
+				actionLoadPage(100);
+			}
+		},
+		success: function(content) {
+			// var cont = $(content).find("content");
+			window.history.pushState("page" + hrefValue, hrefValue, hrefValue);
+			window.history.replaceState("page" + hrefValue, hrefValue, hrefValue);			
+		}
+	})
 }
