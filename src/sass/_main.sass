@@ -240,6 +240,7 @@ body
 	position: relative
 	height: 100%
 	z-index: 2
+	font-size: 0
 	.projects-item
 		position: relative
 		display: block
@@ -596,8 +597,12 @@ body
 				user-select: none
 				pointer-events: none
 				&:nth-child(3)
-					+rem(top, -8px)
+					+rem(padding-left, 7px)
+					+rem(top, -12px)
 					font-family: "Light"
+					+rem(font-size, 55px)
+				&:nth-child(5)
+					+rem(left, -8px)
 		.loader-text
 			font-family: "Light"
 			color: $white
@@ -607,6 +612,8 @@ body
 			user-select: none
 			pointer-events: none
 			opacity: 0
+			position: relative
+			+rem(left, 8px)
 	.timeline
 		height: 4px
 		background-color: $white
