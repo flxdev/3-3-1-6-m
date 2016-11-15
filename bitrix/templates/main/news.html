@@ -7,6 +7,7 @@
     <meta content="IE=9" http-equiv="X-UA-Compatible">
     <meta name="format-detection" content="telephone=no">
     <meta name="theme-color" content="#212121">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#212121">
     <link rel="stylesheet" media="all" href="css/screen.css">
     <script src="http://connect.facebook.net/en_US/sdk.js"></script>
     <script src="js/app.js"></script>
@@ -37,11 +38,11 @@
     </div>
     <!--BEGIN out-->
     <div class="out" id="touch">
+      <div class="hamburger">
+        <div class="hamburger-inner"><span></span><span></span><span></span></div>
+      </div>
       <div class="wrapper">
         <div class="scroll" id="out">
-          <div class="hamburger">
-            <div class="hamburger-inner"><span></span><span></span><span></span></div>
-          </div>
           <div class="content content-news" data-page="news">
             <header class="header"><a class="logo ajax-trigger" href="/"></a>
               <ul class="breadcrumbs">
@@ -62,6 +63,19 @@
               </div>
               <div class="content-body">
                 <div class="gallery-news" id="news-template"></div>
+                <div class="pagination">
+                  <div class="pagination-inner">
+                    <div class="pagination-item pagination-item__left"><a class="trigger" href="#" id="prev"><span><svg viewBox="0 0 8.1 14.9" xmlns="http://www.w3.org/2000/svg"><path id="svg_1" d="m3.4,0.9l1,0l0,14l-1,0l0,-14" clip-rule="evenodd" fill-rule="evenodd"/><path id="svg_2" d="m0.7,4.7l-0.7,-0.6l3.9,-4.1l0.7,0.7l-3.9,4" clip-rule="evenodd" fill-rule="evenodd"/><path id="svg_3" d="m3.2,0.7l0.7,-0.7l4.2,4l-0.7,0.7l-4.2,-4" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></a></div>
+                    <div class="pagination-counter">
+                      <div class="pagination-counter__inner">
+                        <div class="pagination-current"> <span class="current">01</span></div>
+                        <div class="pagination-spacer">/</div>
+                        <div class="pagination-all">04</div>
+                      </div>
+                    </div>
+                    <div class="pagination-item pagination-item__right"><a class="trigger" href="#" id="next"><span><svg viewBox="0 0 8.1 14.9" xmlns="http://www.w3.org/2000/svg"><path id="svg_1" d="m4.7,14l-1,0l0,-14l1,0l0,14" clip-rule="evenodd" fill-rule="evenodd"/><path id="svg_2" d="m7.4,10.2l0.7,0.7l-3.9,4.1l-0.7,-0.7l3.9,-4.1" clip-rule="evenodd" fill-rule="evenodd"/><path id="svg_3" d="m4.9,14.1l-0.7,0.7l-4.2,-4l0.7,-0.7l4.2,4" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></a></div>
+                  </div>
+                </div>
               </div>
               <script id="facebook_template" type="text/template">
                 <a class="gallery-news__item" href=#link# target="_blank" rel="nofollow">
@@ -71,7 +85,7 @@
                 		</div>
                 		<div class="gallery-news__name">
                 			<data>#convert_time#</data>
-                			<span><i>#name#</i></span>
+                			<span><i>#message#</i></span>
                 		</div>
                 	</div>
                 	<div class="counter">

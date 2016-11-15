@@ -4,9 +4,9 @@ block title
 	title Catalog
 
 block content
+	include includes/_burger
 	.wrapper
 		.scroll#out
-			include includes/_burger
 			.content.content-news(data-page="news")
 				include includes/_header
 				.content-wrapper
@@ -17,6 +17,8 @@ block content
 								| #Facebook
 					.content-body
 						.gallery-news#news-template
+						- var ajax = false;
+						include includes/_pagination
 					script(id="facebook_template" type='text/template').
 						<a class="gallery-news__item" href=#link# target="_blank" rel="nofollow">
 							<div class="t-contaner">
@@ -25,7 +27,7 @@ block content
 								</div>
 								<div class="gallery-news__name">
 									<data>#convert_time#</data>
-									<span><i>#name#</i></span>
+									<span><i>#message#</i></span>
 								</div>
 							</div>
 							<div class="counter">

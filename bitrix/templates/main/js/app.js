@@ -4450,13 +4450,15 @@ customScroll.prototype.init = function() {
 	var self = this;
 	this.scroll = new IScroll(self.el, {
 		bounce: false,
-		bounceTime: 50,
 		click: true,
 		mouseWheel: true,
-		probeType: 2
+		probeType: 2,
+		scrollbars: true,
+		fadeScrollbars: true,
+		HWCompositing: false
 	});
 
-	if($(this.el).find(".scroll").offset().top != 0) {
+	if($(this.el).find(".scroll").offset().top > 0) {
 		self.scroll.scrollTo(0, -Math.round($(self.el).find(".scroll").innerHeight()) + $(self.el).height())
 	}
 	if(this.el == ".wrapper") {
@@ -4477,12 +4479,16 @@ customScroll.prototype.scrollUp = function(){
 	this.scroll.scrollTo(0,0);
 }
 
+customScroll.prototype.scrollToElement = function (y) {
+	this.scroll.scrollTo(0, y)
+}
+
 customScroll.prototype.endscroll = function() {
 	var self = this;
 	this.scroll.on("scrollEnd", function() {
-		if($("#news-template").length) {
-			fb.scrollEvents(-this.y, self.el);
-		}
+		// if($("#news-template").length) {
+		// 	fb.scrollEvents(-this.y, self.el);
+		// }
 	})
 }
 
@@ -4527,8 +4533,8 @@ function lightG(){
 		download: false,
 		counter: false,
 		mode: 'lg-slide',
-		prevHtml: '<i><svg viewBox="0 0 81 65" xmlns="http://www.w3.org/2000/svg"><path d="m76.40741,28.62963l-62.344,0l21.456,-21.456c1.562,-1.562 1.562,-4.095 0.001,-5.657c-1.562,-1.562 -4.096,-1.562 -5.658,0l-28.283,28.284l0,0c-0.186,0.186 -0.352,0.391 -0.498,0.61c-0.067,0.101 -0.114,0.21 -0.171,0.315c-0.067,0.124 -0.142,0.242 -0.196,0.373c-0.056,0.135 -0.088,0.276 -0.129,0.416c-0.032,0.111 -0.075,0.217 -0.098,0.331c-0.052,0.259 -0.08,0.521 -0.08,0.784l0,0c0,0.003 0.001,0.005 0.001,0.008c0,0.259 0.027,0.519 0.078,0.774c0.024,0.121 0.069,0.232 0.104,0.349c0.039,0.133 0.07,0.268 0.123,0.397c0.058,0.139 0.136,0.265 0.208,0.396c0.054,0.098 0.096,0.198 0.159,0.292c0.147,0.221 0.314,0.427 0.501,0.614l28.282,28.281c1.562,1.562 4.095,1.562 5.657,0.001c1.562,-1.562 1.562,-4.096 0,-5.658l-21.456,-21.454l62.343,0c2.209,0 4,-1.791 4,-4s-1.791,-4 -4,-4z"/></svg></i>',
-		nextHtml: '<i><svg viewBox="0 0 81 65" xmlns="http://www.w3.org/2000/svg"><path id="svg_1" d="m4.38095,36.40194l62.344,0l-21.456,21.456c-1.562,1.562 -1.562,4.095 -0.001,5.656c1.562,1.562 4.096,1.562 5.658,0l28.283,-28.284l0,0c0.186,-0.186 0.352,-0.391 0.498,-0.609c0.067,-0.101 0.114,-0.21 0.172,-0.315c0.066,-0.124 0.142,-0.242 0.195,-0.373c0.057,-0.135 0.089,-0.275 0.129,-0.415c0.033,-0.111 0.076,-0.217 0.099,-0.331c0.052,-0.26 0.079,-0.522 0.079,-0.785l0,0c0,-0.003 -0.001,-0.006 -0.001,-0.009c-0.001,-0.259 -0.027,-0.519 -0.078,-0.774c-0.024,-0.12 -0.069,-0.231 -0.104,-0.349c-0.039,-0.133 -0.069,-0.268 -0.123,-0.397c-0.058,-0.139 -0.136,-0.265 -0.208,-0.396c-0.054,-0.098 -0.097,-0.198 -0.159,-0.292c-0.146,-0.221 -0.314,-0.427 -0.501,-0.614l-28.282,-28.281c-1.562,-1.562 -4.095,-1.562 -5.657,-0.001c-1.562,1.562 -1.562,4.095 0,5.658l21.456,21.455l-62.343,0c-2.209,0 -4,1.791 -4,4c0,2.209 1.791,4 4,4z"/></svg></i>'
+		prevHtml: '',
+		nextHtml: ''
 	})
 }
 
@@ -4554,7 +4560,6 @@ function modalWindow(data) {
 
 	close.add(popupSelector).on("click", function(){
 		if(!popupSelector.hasClass("open")) return;
-
 		popupSelector.removeClass("open");
 		html.removeClass("modal-open "+ data);
 		form.trigger("reset");
@@ -4878,26 +4883,64 @@ FacebookFeeds.prototype._init = function() {
 		contPage: 8
 	};
 
+	this.paginAll = $(this._el).parents(".wrapper").find('.pagination-all');
+	this.btnNext = $(this._el).parents(".wrapper").find('#next');
+	this.btnPrev = $(this._el).parents(".wrapper").find('#prev');
+	this.countCurrent = $(this._el).parents(".wrapper").find(".pagination-current");
+
+	this.loader = $(".pageSurfLoader");
+
 	this.res;
 	this.conteiner = $("#news-template");
+
+	this.allPages;
+	this.template;
+
+	this.objTemplates = [];
+
 	this.initEvent();
 };
 
 FacebookFeeds.prototype.initEvent = function() {
-
-}
-
-FacebookFeeds.prototype.scrollEvents = function(posY, element) {
 	var self = this;
 
-	this.position = posY;
-	this.docAll = $(element).find(".scroll").outerHeight() - $(element).height() - $(element).height() / 2;
+	this.btnNext.on("click", function() {
+		if(self.current == self.allPages - 1) {
+			setTimeout(function(){
+				$(".wrapper").removeClass("return");
+			},200)
+			return false;
+		}
+		++self.current;		
+		$(self._el).parents(".wrapper").css("opacity", "0");
+		setTimeout(function(){
+			mainScrollInit.scrollToElement(0);
+			self.loadElements();
+			self._update();
+			self.filterObject(self.current);
+		},300);
+		event.preventDefault();
+	});
 
-	if(this.position > this.docAll) {
-		++self.current;
-		self.filterObject(self.current)
-	}
-}
+	this.btnPrev.on("click", function() {
+		if(self.current == 0) {
+			setTimeout(function(){
+				$(".wrapper").removeClass("return");
+			},200)
+			return false;
+		}
+		--self.current;		
+		$(self._el).parents(".wrapper").css("opacity", "0");
+		setTimeout(function(){
+			mainScrollInit.scrollToElement(0);
+			self.loadElements();
+			self._update();
+			self.filterObject(self.current);
+		},300);
+		event.preventDefault();
+	});
+
+};
 
 FacebookFeeds.prototype.getData = function(type, fields){
 	var self = this;
@@ -4912,8 +4955,11 @@ FacebookFeeds.prototype.getData = function(type, fields){
 	$.ajax({
 		url: 'https://graph.facebook.com/' + _data.group + '/' + type,
 		data: send_data,
+		type: 'get',
 		success: function(res) {
+			self.allPages = self.countPage(res.data);
 			self.res = res;
+
 			self.filterObject();
 		}
 	});
@@ -4937,6 +4983,22 @@ FacebookFeeds.prototype.filterObject = function(current) {
 
 	this.setData(this.resDate, this.template);
 }
+
+FacebookFeeds.prototype.countPage = function(results) {
+	this.allPage = Math.round((results.length - _data.contPage) / 8 + 1);
+	if(this.allPage < 10) {
+		this.paginAll.text("0" + this.allPage);
+	} else {
+		this.paginAll.text(this.allPage)
+	}
+	return this.allPage
+}
+
+FacebookFeeds.prototype._update = function() {
+
+	$(this.countCurrent).text("0" + (this.current + 1));
+
+};
 
 FacebookFeeds.prototype.convertDate = function(date) {
 	var pStr = date.split('T'),
@@ -4974,8 +5036,8 @@ FacebookFeeds.prototype.setData = function(results, template) {
 			element.like = 0;
 		}
 
-		if(typeof element.name == 'undefined')
-			element.name = '';
+		if(typeof element.message == 'undefined')
+			element.message = '';
 
 		element.convert_time = self.convertDate(element.created_time);
 
@@ -4999,6 +5061,45 @@ FacebookFeeds.prototype.appendTemplate = function(template, curr) {
 	mainScrollInit.update();
 }
 
+FacebookFeeds.prototype.loadElements = function(){
+	var self = this;
+
+	this.loader.addClass("openLoader");
+	
+	this.animationContent();
+}
+FacebookFeeds.prototype.animationContent = function() {
+	var self = this;
+
+	this.Elements = $(".gallery-news__cover");
+
+	this.firstElements = $(".gallery-news__cover").first();
+	this.lastElements = $(".gallery-news__cover").last();
+
+	this.firstElements.addClass("fadeOut");
+	this.lastElements.addClass("fadeIn");
+	setTimeout(function() {
+		self.unloadElements()
+	}, 1400);
+}
+FacebookFeeds.prototype.unloadElements = function() {
+	var self = this;
+	this.loader.removeClass("openLoader");
+	this.Elements.addClass("animate");
+	this.removeElements();
+}
+
+FacebookFeeds.prototype.removeElements = function(){
+	var self = this;
+	this.Elements.on("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oAnimationEnd animationend", function(){
+		self.Elements.removeClass("fadeOut fadeIn animate");
+		self.firstElements.remove();
+		$(".wrapper").removeClass("return");
+		mainScrollInit.update();
+		$(self._el).parents(".wrapper").css("opacity", "1");
+	})	
+}
+
 $(document).ready(function(){
 	loadedImg()
 
@@ -5008,7 +5109,8 @@ $(document).ready(function(){
 			container = $(".page-menu"),
 			link = container.find(".ajax-trigger"),
 			scroll = $(".out"),
-			close = container.find(".close");	
+			close = container.find(".close"),
+			posY;	
 
 		_this.init = function() {
 			
@@ -5035,10 +5137,12 @@ $(document).ready(function(){
 		}
 
 		_this.closeMenu = function() {
+			posY = $(".scroll").offset().top;
 			trigger.removeClass("open");
 			container.removeClass("open");
 			scroll.removeAttr("style")
-			mainScrollInit.init()
+			mainScrollInit.init();
+			mainScrollInit.scrollToElement(posY);
 		}
 
 		_this.triggerLink = function(item){
