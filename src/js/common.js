@@ -23,7 +23,7 @@ function loadedImg() {
 					setTimeout(function(){
 						$(".out").addClass("load-page dom");
 					},100);
-					document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+					// document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
 					var pull = new PullMobile;
 					pull.init();
 				}
@@ -103,6 +103,15 @@ function loadedImg() {
 			}
 		})
 }
+
+function lazyImage(){
+	$('img').Lazy({
+		afterLoad: function(){
+			mainScrollInit.update();
+		}
+	})
+}
+
 function customScroll(el) {
 	this.el = el;
 	this.init();
@@ -120,7 +129,7 @@ customScroll.prototype.init = function() {
 		HWCompositing: false
 	});
 
-	if($(this.el).find(".scroll").offset().top > 0) {
+	if($(this.el).find(".scroll").offset().top < 0) {
 		self.scroll.scrollTo(0, -Math.round($(self.el).find(".scroll").innerHeight()) + $(self.el).height())
 	}
 	if(this.el == ".wrapper") {
@@ -196,7 +205,8 @@ function lightG(){
 		counter: false,
 		mode: 'lg-slide',
 		prevHtml: '',
-		nextHtml: ''
+		nextHtml: '',
+		controls: false
 	})
 }
 
@@ -614,15 +624,21 @@ FacebookFeeds.prototype.getData = function(type, fields){
 		limit: 100
 	};
 
+	console.log('https://graph.facebook.com/' + _data.group + '/' + type)
+
 	$.ajax({
 		url: 'https://graph.facebook.com/' + _data.group + '/' + type,
 		data: send_data,
 		type: 'get',
+		dataType: "JSON",
 		success: function(res) {
 			self.allPages = self.countPage(res.data);
 			self.res = res;
 
 			self.filterObject();
+		},
+		error: function() {
+			alert();
 		}
 	});
 };
@@ -761,6 +777,8 @@ FacebookFeeds.prototype.removeElements = function(){
 		$(self._el).parents(".wrapper").css("opacity", "1");
 	})	
 }
+
+
 
 $(document).ready(function(){
 	loadedImg()

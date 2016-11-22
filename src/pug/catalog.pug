@@ -33,7 +33,7 @@ block content
 										li(class="load")
 											a
 												.image__cover
-													img(src=link)
+													img(data-src=link)
 												.projects-hash
 													span(class="hash-item") ##{hash}
 												.descr
@@ -63,6 +63,8 @@ block content
 									+gridItem("img/grid/grid-1.jpg", "houses", "House#1", "105", "2 500")
 									+gridItem("img/grid/grid-1.jpg", "interiors", "Interior#1", "53", "3 000")
 									+gridItem("img/grid/grid-1.jpg", "layouts", "House#1", "205", "4 000")
+							script(type="text/javascript").
+								$(lazyImage)
 				- var name = "services"
 				include includes/_footer
 		- var current = "Catalog"

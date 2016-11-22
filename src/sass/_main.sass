@@ -58,7 +58,7 @@ body
 	// user-select: none
 .content
 	position: relative
-	min-height: 100%
+	min-height: 100vh
 	+rem(padding, 0 0 150px 0)
 .header
 	+clr
@@ -267,7 +267,7 @@ body
 				pointer-events: none
 			.project-info__inner
 				position: relative
-				+rem(height, 190px)
+				// +rem(height, 190px)
 		.projects-image
 			// position: relative
 			transform: translateZ(0)
@@ -434,7 +434,6 @@ body
 		display: none!important
 	.zoomIn
 		background-color: $black
-		border-bottom: 1px solid $white
 		position: relative
 		&::after
 			content: "+"
@@ -1062,6 +1061,10 @@ body
 			letter-spacing: 1.3px;
 	+rm(992)
 		display: block
+.table
+	.cap
+		+r(980)
+			display: block;
 @keyframes fadeIn
 	0% 
 		opacity: 0
