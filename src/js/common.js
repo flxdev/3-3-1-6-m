@@ -169,6 +169,9 @@ function iso() {
 	grid.isotope({
 		itemSelector: 'li'
 	});
+	grid.imagesLoaded().progress( function() {
+		grid.isotope('layout');
+	}); 
 
 	$('.sort').on('click', function(){
 		var filterValue = $(this).attr('data-filter');
@@ -374,7 +377,7 @@ var PullMobile = function(){
 	var defaults = {
 		contentEl: 'out',
 		ptrEl: 'pan-loader',
-		distanceToRefresh: 120,
+		distanceToRefresh: 70,
 		loadingFunction: false,
 		resistance: 2.5
 	};
@@ -462,7 +465,7 @@ var PullMobile = function(){
 	this._setPanContent = function(){
 		document.getElementById('touch').style.webkitTransform = 'translate3d( 0, -' + pan.distance + 'px, 0 )';
 		document.getElementById('pan-loader').style.webkitTransform = 'translate3d( 0, -' + pan.distance + 'px, 0 )';
-		$(".outer").attr("stroke-dashoffset", 50 - (pan.distance/2.4));
+		$(".outer").attr("stroke-dashoffset", 50 - (pan.distance/1.4));
 	};
 
 	this._panEnd = function(e) {
