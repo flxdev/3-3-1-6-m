@@ -287,14 +287,14 @@ function initialize(){
 	var mapOptions = {
 		zoom: 14,
 		disableDefaultUI: true,
-		scrollwheel: false,
-		panControl: false,
+		scrollwheel: true,
+		panControl: true,
 		zoomControl: false,
 		zoomControlOptions: {
 			style: google.maps.ZoomControlStyle.SMALL,
 			position: google.maps.ControlPosition.RIGHT_CENTER
 		},
-		// scaleControl: true,
+		scaleControl: false,
 		center: new google.maps.LatLng(53.913332, 27.567922),
 	};
 	map = new google.maps.Map(document.getElementById('map'),mapOptions);
@@ -323,6 +323,24 @@ function initialize(){
 
   	zoomControlDiv.index = 1;
 	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(zoomControlDiv);
+
+	$(".maps-container").on("click", function(e){
+		map.setOptions({ 'draggable': true });
+		mainScrollInit.destroy();
+		e.stopPropagation();
+	});
+	$(".wrapper").on("click", function(){
+		if($(this).find(">.iScrollVerticalScrollbar").length){
+			return false;
+		} else {
+			var top = $(".wrapper").find(">.scroll").offset().top;
+			console.log(top);
+			mainScrollInit.init();
+			mainScrollInit.scrollToElement(top);
+			map.setOptions({ 'draggable': false });
+		}
+		
+	});
 
 };
 
