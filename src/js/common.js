@@ -23,7 +23,7 @@ function loadedImg() {
 					setTimeout(function(){
 						$(".out").addClass("load-page dom");
 					},100);
-					// document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+					document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
 					var pull = new PullMobile;
 					pull.init();
 				}
@@ -294,7 +294,7 @@ function initialize(){
 			style: google.maps.ZoomControlStyle.SMALL,
 			position: google.maps.ControlPosition.RIGHT_CENTER
 		},
-		scaleControl: true,
+		// scaleControl: true,
 		center: new google.maps.LatLng(53.913332, 27.567922),
 	};
 	map = new google.maps.Map(document.getElementById('map'),mapOptions);
@@ -884,4 +884,31 @@ function ajaxLoader(link) {
 			window.history.replaceState("page" + hrefValue, hrefValue, hrefValue);			
 		}
 	})
+}
+function validator() {
+	var form_validate = $('.js-validation');
+	if (form_validate.length) {
+		form_validate.each(function () {
+			var form_this = $(this);
+			$.validate({
+				form : form_this,
+				borderColorOnError : true,
+				scrollToTopOnError : false,
+				onError: function($form){
+
+				},
+				onValid: function($form){
+					
+				},
+				onSuccess: function($form){
+					valid($form);
+					return false;
+				}
+			});
+		});
+	};
+}
+function valid(form) {
+	$(form).parents('.modal__wrapper').find('.modal-container').addClass("hide");
+	$(form).parents('.modal__wrapper').find('.modal-success').addClass("visible");			
 }

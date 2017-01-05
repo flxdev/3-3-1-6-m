@@ -905,6 +905,44 @@ body
 		+rem(max-width, 480px)
 		+rem(padding, 100px 40px)
 		width: 100%
+		transition: opacity 0.3s ease, visibility 0.3s ease
+		&.hide
+			opacity: 0
+			visibility: hidden
+	.modal-success
+		position: absolute
+		top: 0
+		left: 0
+		display: inline-block
+		vertical-align: middle
+		+rem(max-width, 480px)
+		+rem(padding, 100px 80px)
+		text-align: left
+		transform: translate(-100%, 0)
+		opacity: 0
+		visibility: hidden
+		transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease
+		&.visible
+			opacity: 1
+			visibility: visible
+			transform: none
+			transition-delay: 0.3s
+		.success-text
+			.success-head
+				font-family: "Book"
+				+rem(font-size, 36px)
+				color: $white
+			.success-body
+				font-family: "Book"
+				+rem(font-size, 18px)
+				color: $white
+.help-block 
+	position: absolute
+	top: 100%
+	color: $white
+	+rem(font-size, 12px)
+	+rem(letter-spacing, 0.9px)
+	+rem(margin-top, 3px)
 .close
 	+rem(width, 30px)
 	+rem(height, 30px)
@@ -935,6 +973,7 @@ body
 	text-align: left
 	width: 100%
 	.field
+		position: relative
 		&:not(:last-of-type)
 			+rem(margin-bottom, 30px)
 		.field-head
@@ -1059,7 +1098,13 @@ body
 			background-color: $white;
 			padding: 8px 25px;
 			letter-spacing: 1.3px;
-	+rm(992)
+	// +rm(1025)
+	// 	display: block
+@media screen and (min-width: 1024px) and (orientation: landscape)
+	.cap
+		display: block
+@media screen and (min-width: 1025px) and (orientation: portrait)
+	.cap
 		display: block
 .table
 	.cap

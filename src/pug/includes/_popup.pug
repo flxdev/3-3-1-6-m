@@ -5,25 +5,31 @@
 				span
 				span
 		.modal-container
-			form.form-container
+			form.form-container.js-validation
 				.field
 					.field-head
 						span.number #01
 						span First-name
 					.field-body
-						input(type="text")
+						input(type="text" data-validation="required" data-validation-error-msg="Please fill the field before continuing")
 				.field
 					.field-head
 						span.number #02
 						span Phone
 					.field-body
-						input(type="phone")
+						input(type="text" data-validation="required" data-validation-error-msg="Please fill the field before continuing")
 				.field
 					.field-head 
 						span.number #03
 						span Mail
 					.field-body
-						input(type="email")
+						input(type="text"  data-validation="email" data-validation-error-msg="Please fill the field before continuing")
 				.field
 					button(class="btn btn-white" type="submit")
 						span Send
+		.modal-success
+			.success-text
+				.success-head Thank you
+				.success-body Form successfully completed! In a short time we will contact you.
+script(type='text/javascript').
+	$(validator)
