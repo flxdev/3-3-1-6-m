@@ -9,6 +9,7 @@
     <meta name="theme-color" content="#212121">
     <meta name="apple-mobile-web-app-status-bar-style" content="#212121">
     <link rel="stylesheet" media="all" href="css/screen.css">
+    <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
     <script src="js/app.js"></script>
   </head>
   <body>
@@ -16,21 +17,17 @@
       <div class="frame frame-top"></div>
       <div class="loader-container">
         <div class="letters-container">
-          <div class="loader-numbers"><span class="point_1">3</span><span class="point_2">3</span><span class="point_3">|</span><span class="point_4">1</span><span class="point_5">6</span></div>
-          <div class="loader-text">ARCHITECTS</div>
+          <div id="animation_container" style="background-color:rgba(0, 0, 0, 1.00); width:600px; height:121px">
+            <canvas id="canvas" width="600" height="121" style="position: absolute; display: block; background-color:rgba(0, 0, 0, 1.00)"></canvas>
+            <div id="dom_overlay_container" style="pointer-events:none; overflow:hidden; width:600px; height:121px; position: absolute; left: 0px; top: 0px; display: block"></div>
+          </div>
         </div>
       </div>
       <div class="frame frame-bottom"></div>
       <div class="timeline"></div>
     </div>
     <div class="pageLoader">
-      <div class="lines-container">
-        <div class="lines">
-          <div class="line"></div>
-          <div class="line"></div>
-          <div class="line"></div>
-        </div>
-      </div>
+      <div class="lines-container"></div>
     </div>
     <div class="pageSurfLoader">
       <div class="loader"></div>
@@ -108,8 +105,7 @@
                   <div class="name">Kuibysheva 33|16 kiseleva</div>
                 </div>
                 <div class="footer-item"><a class="develop" href="flxmd.by" target="_blank" rel="nofollow">by #flxmd</a></div>
-              </div>
-              <div class="nav-page-button" data-href="services"><span>Pull up to services</span></div>
+              </div><a class="nav-page-button" href="services" data-href="services"><span>Pull up to services</span></a>
             </footer>
           </div>
         </div>

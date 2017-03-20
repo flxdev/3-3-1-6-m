@@ -29,68 +29,69 @@ function loadedImg() {
 				}
 			},0)
 	}
+	canvasRender();
 	TimeLine
-		.set($point1, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($point2, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($point3, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($point4, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($point5, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($text, {
-			autoAlpha: 0
-		})
+		// .set($point1, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($point2, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($point3, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($point4, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($point5, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($text, {
+		// 	autoAlpha: 0
+		// })
 
-		.to($point1, 1.2, {
-			z: "-=400px",
-			autoAlpha: 1,
-			ease: Power2.easeOut
-		},0)
-		.to($point2, 1.2, {
-			z: "-=400px",
-			delay: 0.6,
+		// .to($point1, 1.2, {
+		// 	z: "-=400px",
+		// 	autoAlpha: 1,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($point2, 1.2, {
+		// 	z: "-=400px",
+		// 	delay: 0.6,
 
-			autoAlpha: 1,
-			ease: Power2.easeOut
-		},0)
-		.to($point3, 1.2, {
-			z: "-=400px",
-			autoAlpha: 1,
-			delay: 1.2,
-			ease: Power2.easeOut
-		},0)
-		.to($point4, 1.2, {
-			z: "-=400px",
-			autoAlpha: 1,
-			delay: 0.9,
-			ease: Power2.easeOut
-		},0)
-		.to($point5, 1.2, {
-			z: "-=400px",
-			autoAlpha: 1,
-			delay: 0.3,
-			ease: Power2.easeOut
-		},0)
-		.to($text, 1.2, {
-			autoAlpha: 1,
-			delay: 1.8,
-			ease: Sine.easeIn 
-		},0)
+		// 	autoAlpha: 1,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($point3, 1.2, {
+		// 	z: "-=400px",
+		// 	autoAlpha: 1,
+		// 	delay: 1.2,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($point4, 1.2, {
+		// 	z: "-=400px",
+		// 	autoAlpha: 1,
+		// 	delay: 0.9,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($point5, 1.2, {
+		// 	z: "-=400px",
+		// 	autoAlpha: 1,
+		// 	delay: 0.3,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($text, 1.2, {
+		// 	autoAlpha: 1,
+		// 	delay: 1.8,
+		// 	ease: Sine.easeIn 
+		// },0)
 		.to($lettersContainer, 0.3, {
-			delay: 1,
+			delay: 3,
 			scaleX: 1,
 			scaleY: 0
 		})
@@ -98,12 +99,64 @@ function loadedImg() {
 			scaleX: 1,
 			scaleY: 1,
 			onComplete: function() {
-				frameAnim()
-				$timeline.fadeOut(100)
+				// frameAnim()
+				// $timeline.fadeOut(100)
 			}
 		})
 }
-
+var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
+function canvasRender() {
+	canvas = document.getElementById("canvas");
+	anim_container = document.getElementById("animation_container");
+	dom_overlay_container = document.getElementById("dom_overlay_container");
+	handleComplete();
+}
+function handleComplete() {
+	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+	exportRoot = new lib._33161();
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);	
+	//Registers the "tick" event listener.
+	fnStartAnimation = function() {
+		createjs.Ticker.setFPS(lib.properties.fps);
+		createjs.Ticker.addEventListener("tick", stage);
+	}	    
+	//Code to support hidpi screens and responsive scaling.
+	function makeResponsive(isResp, respDim, isScale, scaleType) {		
+		var lastW, lastH, lastS=1;		
+		window.addEventListener('resize', resizeCanvas);		
+		resizeCanvas();		
+		function resizeCanvas() {			
+			var w = lib.properties.width, h = lib.properties.height;			
+			var iw = window.innerWidth, ih=window.innerHeight;			
+			var pRatio = window.devicePixelRatio || 1, xRatio=iw/w, yRatio=ih/h, sRatio=1;			
+			if(isResp) {                
+				if((respDim=='width'&&lastW==iw) || (respDim=='height'&&lastH==ih)) {                    
+					sRatio = lastS;                
+				}				
+				else if(!isScale) {					
+					if(iw<w || ih<h)						
+					sRatio = Math.min(xRatio, yRatio);				
+				}				
+			else if(scaleType==1) {					
+				sRatio = Math.min(xRatio, yRatio);				
+			}				
+			else if(scaleType==2) {					
+				sRatio = Math.max(xRatio, yRatio);				
+			}			
+		}			
+		canvas.width = w*pRatio*sRatio;			
+		canvas.height = h*pRatio*sRatio;
+		canvas.style.width = dom_overlay_container.style.width = anim_container.style.width =  w*sRatio+'px';				
+		canvas.style.height = anim_container.style.height = dom_overlay_container.style.height = h*sRatio+'px';
+		stage.scaleX = pRatio*sRatio;			
+		stage.scaleY = pRatio*sRatio;			
+		lastW = iw; lastH = ih; lastS = sRatio;		
+		}
+	}
+	makeResponsive(false,'both',false,1);	
+	fnStartAnimation();
+}
 function lazyImage(){
 	$('img').Lazy({
 		afterLoad: function(){

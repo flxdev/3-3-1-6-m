@@ -4354,6 +4354,374 @@ if ( typeof module != 'undefined' && module.exports ) {
  *  @license MIT
  */
 !function(a,b){"function"==typeof define&&define.amd?define(["jquery"],function(a){return b(a)}):"object"==typeof exports?module.exports=b(require("jquery")):b(jQuery)}(this,function(a){!function(a,b){function c(a,b){this.$form=a,this.$input=b,this.reset(),b.on("change paste",this.reset.bind(this))}var d=function(){return!1},e={numHalted:0,haltValidation:function(b){this.numHalted++,a.formUtils.haltValidation=!0,b.unbind("submit",d).bind("submit",d).find('*[type="submit"]').addClass("disabled").attr("disabled","disabled")},unHaltValidation:function(b){this.numHalted--,0===this.numHalted&&(a.formUtils.haltValidation=!1,b.unbind("submit",d).find('*[type="submit"]').removeClass("disabled").removeAttr("disabled","disabled"))}};c.prototype.reset=function(){this.haltedFormValidation=!1,this.hasRun=!1,this.isRunning=!1,this.result=b},c.prototype.run=function(a,b){return"keyup"===a?null:this.isRunning?(this.haltedFormValidation||"submit"!==a||(e.haltValidation(),this.haltedFormValidation=!0),null):this.hasRun?this.result:("submit"===a&&(e.haltValidation(this.$form),this.haltedFormValidation=!0),this.isRunning=!0,this.$input.attr("disabled","disabled").addClass("async-validation"),this.$form.addClass("async-validation"),b(function(a){this.done(a)}.bind(this)),null)},c.prototype.done=function(a){this.result=a,this.hasRun=!0,this.isRunning=!1,this.$input.removeAttr("disabled").removeClass("async-validation"),this.$form.removeClass("async-validation"),this.haltedFormValidation?(e.unHaltValidation(this.$form),this.$form.trigger("submit")):this.$input.trigger("validation.revalidate")},a.formUtils=a.extend(a.formUtils||{},{asyncValidation:function(a,b,d){var e,f=b.get(0);return f.asyncValidators||(f.asyncValidators={}),f.asyncValidators[a]?e=f.asyncValidators[a]:(e=new c(d,b),f.asyncValidators[a]=e),e}})}(a),function(a,b){"use strict";function c(b){b&&"custom"===b.errorMessagePosition&&"function"==typeof b.errorMessageCustom&&(a.formUtils.warn("Use of deprecated function errorMessageCustom, use config.submitErrorMessageCallback instead"),b.submitErrorMessageCallback=function(a,c){b.errorMessageCustom(a,b.language.errorTitle,c,b)})}function d(b){if(b.errorMessagePosition&&"object"==typeof b.errorMessagePosition){a.formUtils.warn("Deprecated use of config parameter errorMessagePosition, use config.submitErrorMessageCallback instead");var c=b.errorMessagePosition;b.errorMessagePosition="top",b.submitErrorMessageCallback=function(){return c}}}function e(b){var c=b.find("[data-validation-if-checked]");c.length&&a.formUtils.warn('Detected use of attribute "data-validation-if-checked" which is deprecated. Use "data-validation-depends-on" provided by module "logic"'),c.on("beforeValidation",function(){var c=a(this),d=c.valAttr("if-checked"),e=a('input[name="'+d+'"]',b),f=e.is(":checked"),g=(a.formUtils.getValue(e)||"").toString(),h=c.valAttr("if-checked-value");(!f||h&&h!==g)&&c.valAttr("skipped",!0)})}function f(b){var c={se:"sv",cz:"cs",dk:"da"};if(b.lang in c){var d=c[b.lang];a.formUtils.warn('Deprecated use of lang code "'+b.lang+'" use "'+d+'" instead'),b.lang=d}}a.fn.validateForm=function(b,c){return a.formUtils.warn("Use of deprecated function $.validateForm, use $.isValid instead"),this.isValid(b,c,!0)},a(window).on("formValidationPluginInit",function(a,b){f(b),c(b),d(b)}).on("validatorsLoaded formValidationSetup",function(b,c){c||(c=a("form")),e(c)})}(a),function(a){"use strict";var b={resolveErrorMessage:function(a,b,c,d,e){var f=d.validationErrorMsgAttribute+"-"+c.replace("validate_",""),g=a.attr(f);return g||(g=a.attr(d.validationErrorMsgAttribute),g||(g="function"!=typeof b.errorMessageKey?e[b.errorMessageKey]:e[b.errorMessageKey(d)],g||(g=b.errorMessage))),g},getParentContainer:function(b){if(b.valAttr("error-msg-container"))return a(b.valAttr("error-msg-container"));var c=b.parent();if(!c.hasClass("form-group")&&!c.closest("form").hasClass("form-horizontal")){var d=c.closest(".form-group");if(d.length)return d.eq(0)}return c},applyInputErrorStyling:function(a,b){a.addClass(b.errorElementClass).removeClass("valid"),this.getParentContainer(a).addClass(b.inputParentClassOnError).removeClass(b.inputParentClassOnSuccess),""!==b.borderColorOnError&&a.css("border-color",b.borderColorOnError)},applyInputSuccessStyling:function(a,b){a.addClass("valid"),this.getParentContainer(a).addClass(b.inputParentClassOnSuccess)},removeInputStylingAndMessage:function(a,c){a.removeClass("valid").removeClass(c.errorElementClass).css("border-color","");var d=b.getParentContainer(a);if(d.removeClass(c.inputParentClassOnError).removeClass(c.inputParentClassOnSuccess),"function"==typeof c.inlineErrorMessageCallback){var e=c.inlineErrorMessageCallback(a,!1,c);e&&e.html("")}else d.find("."+c.errorMessageClass).remove()},removeAllMessagesAndStyling:function(c,d){if("function"==typeof d.submitErrorMessageCallback){var e=d.submitErrorMessageCallback(c,!1,d);e&&e.html("")}else c.find("."+d.errorMessageClass+".alert").remove();c.find("."+d.errorElementClass+",.valid").each(function(){b.removeInputStylingAndMessage(a(this),d)})},setInlineMessage:function(b,c,d){this.applyInputErrorStyling(b,d);var e,f=document.getElementById(b.attr("name")+"_err_msg"),g=!1,h=function(d){a.formUtils.$win.trigger("validationErrorDisplay",[b,d]),d.html(c)},i=function(){var f=!1;g.find("."+d.errorMessageClass).each(function(){if(this.inputReferer===b[0])return f=a(this),!1}),f?c?h(f):f.remove():""!==c&&(e=a('<div class="'+d.errorMessageClass+' alert"></div>'),h(e),e[0].inputReferer=b[0],g.prepend(e))};if(f)a.formUtils.warn("Using deprecated element reference "+f.id),g=a(f),i();else if("function"==typeof d.inlineErrorMessageCallback){if(g=d.inlineErrorMessageCallback(b,c,d),!g)return;i()}else{var j=this.getParentContainer(b);e=j.find("."+d.errorMessageClass+".help-block"),0===e.length&&(e=a("<span></span>").addClass("help-block").addClass(d.errorMessageClass),e.appendTo(j)),h(e)}},setMessageInTopOfForm:function(b,c,d,e){var f='<div class="{errorMessageClass} alert alert-danger"><strong>{errorTitle}</strong><ul>{fields}</ul></div>',g=!1;if("function"!=typeof d.submitErrorMessageCallback||(g=d.submitErrorMessageCallback(b,c,d))){var h={errorTitle:e.errorTitle,fields:"",errorMessageClass:d.errorMessageClass};a.each(c,function(a,b){h.fields+="<li>"+b+"</li>"}),a.each(h,function(a,b){f=f.replace("{"+a+"}",b)}),g?g.html(f):b.children().eq(0).before(a(f))}}};a.formUtils=a.extend(a.formUtils||{},{dialogs:b})}(a),function(a,b,c){"use strict";var d=0;a.fn.validateOnBlur=function(b,c){var d=this,e=this.find("*[data-validation]");return e.each(function(){var e=a(this);if(e.is("[type=radio]")){var f=d.find('[type=radio][name="'+e.attr("name")+'"]');f.bind("blur.validation",function(){e.validateInputOnBlur(b,c,!0,"blur")}),c.validateCheckboxRadioOnClick&&f.bind("click.validation",function(){e.validateInputOnBlur(b,c,!0,"click")})}}),e.bind("blur.validation",function(){a(this).validateInputOnBlur(b,c,!0,"blur")}),c.validateCheckboxRadioOnClick&&this.find("input[type=checkbox][data-validation],input[type=radio][data-validation]").bind("click.validation",function(){a(this).validateInputOnBlur(b,c,!0,"click")}),this},a.fn.validateOnEvent=function(b,c){var d="FORM"===this[0].nodeName?this.find("*[data-validation-event]"):this;return d.each(function(){var d=a(this),e=d.valAttr("event");e&&d.unbind(e+".validation").bind(e+".validation",function(d){9!==(d||{}).keyCode&&a(this).validateInputOnBlur(b,c,!0,e)})}),this},a.fn.showHelpOnFocus=function(b){return b||(b="data-validation-help"),this.find("textarea,input").each(function(){var c=a(this),e="jquery_form_help_"+ ++d,f=c.attr(b);c.removeClass("has-help-text").unbind("focus.help").unbind("blur.help"),f&&c.addClass("has-help-txt").bind("focus.help",function(){var b=c.parent().find("."+e);0===b.length&&(b=a("<span />").addClass(e).addClass("help").addClass("help-block").text(f).hide(),c.after(b)),b.fadeIn()}).bind("blur.help",function(){a(this).parent().find("."+e).fadeOut("slow")})}),this},a.fn.validate=function(b,c,d){var e=a.extend({},a.formUtils.LANG,d||{});this.each(function(){var d=a(this),f=d.closest("form").get(0)||{},g=f.validationConfig||{};d.one("validation",function(a,c){"function"==typeof b&&b(c,this,a)}),d.validateInputOnBlur(e,a.extend({},g,c||{}),!0)})},a.fn.willPostponeValidation=function(){return(this.valAttr("suggestion-nr")||this.valAttr("postpone")||this.hasClass("hasDatepicker"))&&!b.postponedValidation},a.fn.validateInputOnBlur=function(c,d,e,f){if(a.formUtils.eventType=f,this.willPostponeValidation()){var g=this,h=this.valAttr("postpone")||200;return b.postponedValidation=function(){g.validateInputOnBlur(c,d,e,f),b.postponedValidation=!1},setTimeout(function(){b.postponedValidation&&b.postponedValidation()},h),this}c=a.extend({},a.formUtils.LANG,c||{}),a.formUtils.dialogs.removeInputStylingAndMessage(this,d);var i=this,j=i.closest("form"),k=a.formUtils.validateInput(i,c,d,j,f),l=function(){i.validateInputOnBlur(c,d,!1,"blur.revalidated")};return"blur"===f&&i.unbind("validation.revalidate",l).one("validation.revalidate",l),e&&i.removeKeyUpValidation(),k.shouldChangeDisplay&&(k.isValid?a.formUtils.dialogs.applyInputSuccessStyling(i,d):a.formUtils.dialogs.setInlineMessage(i,k.errorMsg,d)),!k.isValid&&e&&i.validateOnKeyUp(c,d),this},a.fn.validateOnKeyUp=function(b,c){return this.each(function(){var d=a(this);d.valAttr("has-keyup-event")||d.valAttr("has-keyup-event","true").bind("keyup.validation",function(a){9!==a.keyCode&&d.validateInputOnBlur(b,c,!1,"keyup")})}),this},a.fn.removeKeyUpValidation=function(){return this.each(function(){a(this).valAttr("has-keyup-event",!1).unbind("keyup.validation")}),this},a.fn.valAttr=function(a,b){return b===c?this.attr("data-validation-"+a):b===!1||null===b?this.removeAttr("data-validation-"+a):(a=a.length>0?"-"+a:"",this.attr("data-validation"+a,b))},a.fn.isValid=function(b,c,d){if(a.formUtils.isLoadingModules){var e=this;return setTimeout(function(){e.isValid(b,c,d)},200),null}c=a.extend({},a.formUtils.defaultConfig(),c||{}),b=a.extend({},a.formUtils.LANG,b||{}),d=d!==!1,a.formUtils.errorDisplayPreventedWhenHalted&&(delete a.formUtils.errorDisplayPreventedWhenHalted,d=!1);var f=function(b,e){a.inArray(b,h)<0&&h.push(b),i.push(e),e.valAttr("current-error",b),d&&a.formUtils.dialogs.applyInputErrorStyling(e,c)},g=[],h=[],i=[],j=this,k=function(b,d){return"submit"===d||"button"===d||"reset"===d||a.inArray(b,c.ignore||[])>-1};if(d&&a.formUtils.dialogs.removeAllMessagesAndStyling(j,c),j.find("input,textarea,select").filter(':not([type="submit"],[type="button"])').each(function(){var d=a(this),e=d.attr("type"),h="radio"===e||"checkbox"===e,i=d.attr("name");if(!k(i,e)&&(!h||a.inArray(i,g)<0)){h&&g.push(i);var l=a.formUtils.validateInput(d,b,c,j,"submit");l.isValid?l.isValid&&l.shouldChangeDisplay&&(d.valAttr("current-error",!1),a.formUtils.dialogs.applyInputSuccessStyling(d,c)):f(l.errorMsg,d)}}),"function"==typeof c.onValidate){var l=c.onValidate(j);a.isArray(l)?a.each(l,function(a,b){f(b.message,b.element)}):l&&l.element&&l.message&&f(l.message,l.element)}return a.formUtils.isValidatingEntireForm=!1,i.length>0&&d&&("top"===c.errorMessagePosition?a.formUtils.dialogs.setMessageInTopOfForm(j,h,c,b):a.each(i,function(b,d){a.formUtils.dialogs.setInlineMessage(d,d.valAttr("current-error"),c)}),c.scrollToTopOnError&&a.formUtils.$win.scrollTop(j.offset().top-20)),!d&&a.formUtils.haltValidation&&(a.formUtils.errorDisplayPreventedWhenHalted=!0),0===i.length&&!a.formUtils.haltValidation},a.fn.restrictLength=function(b){return new a.formUtils.lengthRestriction(this,b),this},a.fn.addSuggestions=function(b){var c=!1;return this.find("input").each(function(){var d=a(this);c=a.split(d.attr("data-suggestions")),c.length>0&&!d.hasClass("has-suggestions")&&(a.formUtils.suggest(d,c,b),d.addClass("has-suggestions"))}),this}}(a,window),function(a){"use strict";a.formUtils=a.extend(a.formUtils||{},{isLoadingModules:!1,loadedModules:{},loadModules:function(b,c,d){if(a.formUtils.isLoadingModules)return void setTimeout(function(){a.formUtils.loadModules(b,c,d)},10);var e=!1,f=function(b,c){var f=a.split(b),g=f.length,h=function(){g--,0===g&&(a.formUtils.isLoadingModules=!1,d&&e&&"function"==typeof d&&d())};g>0&&(a.formUtils.isLoadingModules=!0);var i="?_="+(new Date).getTime(),j=document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0];a.each(f,function(b,d){if(d=a.trim(d),0===d.length)h();else{var f=c+d+(".js"===d.slice(-3)?"":".js"),g=document.createElement("SCRIPT");f in a.formUtils.loadedModules?h():(a.formUtils.loadedModules[f]=1,e=!0,g.type="text/javascript",g.onload=h,g.src=f+(".dev.js"===f.slice(-7)?i:""),g.onerror=function(){a.formUtils.warn("Unable to load form validation module "+f)},g.onreadystatechange=function(){"complete"!==this.readyState&&"loaded"!==this.readyState||(h(),this.onload=null,this.onreadystatechange=null)},j.appendChild(g))}})};if(c)f(b,c);else{var g=function(){var c=!1;return a('script[src*="form-validator"]').each(function(){var a=this.src.split("form-validator")[1].split("node_modules").length>1;if(!a)return c=this.src.substr(0,this.src.lastIndexOf("/"))+"/","/"===c&&(c=""),!1}),c!==!1&&(f(b,c),!0)};g()||a(g)}}})}(a),function(a){"use strict";a.split=function(b,c,d){d=void 0===d||d===!0;var e="[,|"+(d?"\\s":"")+"-]\\s*",f=new RegExp(e,"g");if("function"!=typeof c){if(!b)return[];var g=[];return a.each(b.split(c?c:f),function(b,c){c=a.trim(c),c.length&&g.push(c)}),g}b&&a.each(b.split(f),function(b,d){if(d=a.trim(d),d.length)return c(d,b)})},a.validate=function(b){var c=a.extend(a.formUtils.defaultConfig(),{form:"form",validateOnEvent:!1,validateOnBlur:!0,validateCheckboxRadioOnClick:!0,showHelpOnFocus:!0,addSuggestions:!0,modules:"",onModulesLoaded:null,language:!1,onSuccess:!1,onError:!1,onElementValidate:!1});if(b=a.extend(c,b||{}),a(window).trigger("formValidationPluginInit",[b]),b.lang&&"en"!==b.lang){var d="lang/"+b.lang+".js";b.modules+=b.modules.length?","+d:d}a(b.form).each(function(c,d){d.validationConfig=b;var e=a(d);e.trigger("formValidationSetup",[e,b]),e.find(".has-help-txt").unbind("focus.validation").unbind("blur.validation"),e.removeClass("has-validation-callback").unbind("submit.validation").unbind("reset.validation").find("input[data-validation],textarea[data-validation]").unbind("blur.validation"),e.bind("submit.validation",function(c){var d=a(this),e=function(){return c.stopImmediatePropagation(),!1};if(a.formUtils.haltValidation)return e();if(a.formUtils.isLoadingModules)return setTimeout(function(){d.trigger("submit.validation")},200),e();var f=d.isValid(b.language,b);if(a.formUtils.haltValidation)return e();if(!f||"function"!=typeof b.onSuccess)return f||"function"!=typeof b.onError?!!f||e():(b.onError(d),e());var g=b.onSuccess(d);return g===!1?e():void 0}).bind("reset.validation",function(){a.formUtils.dialogs.removeAllMessagesAndStyling(e,b)}).addClass("has-validation-callback"),b.showHelpOnFocus&&e.showHelpOnFocus(),b.addSuggestions&&e.addSuggestions(),b.validateOnBlur&&(e.validateOnBlur(b.language,b),e.bind("html5ValidationAttrsFound",function(){e.validateOnBlur(b.language,b)})),b.validateOnEvent&&e.validateOnEvent(b.language,b)}),""!==b.modules&&a.formUtils.loadModules(b.modules,!1,function(){"function"==typeof b.onModulesLoaded&&b.onModulesLoaded();var c="string"==typeof b.form?a(b.form):b.form;a.formUtils.$win.trigger("validatorsLoaded",[c,b])})}}(a),function(a,b){"use strict";var c=a(b);a.formUtils=a.extend(a.formUtils||{},{$win:c,defaultConfig:function(){return{ignore:[],errorElementClass:"error",borderColorOnError:"#b94a48",errorMessageClass:"form-error",validationRuleAttribute:"data-validation",validationErrorMsgAttribute:"data-validation-error-msg",errorMessagePosition:"inline",errorMessageTemplate:{container:'<div class="{errorMessageClass} alert alert-danger">{messages}</div>',messages:"<strong>{errorTitle}</strong><ul>{fields}</ul>",field:"<li>{msg}</li>"},scrollToTopOnError:!0,dateFormat:"yyyy-mm-dd",addValidClassOnAll:!1,decimalSeparator:".",inputParentClassOnError:"has-error",inputParentClassOnSuccess:"has-success",validateHiddenInputs:!1,inlineErrorMessageCallback:!1,submitErrorMessageCallback:!1}},validators:{},_events:{load:[],valid:[],invalid:[]},haltValidation:!1,addValidator:function(a){var b=0===a.name.indexOf("validate_")?a.name:"validate_"+a.name;void 0===a.validateOnKeyUp&&(a.validateOnKeyUp=!0),this.validators[b]=a},warn:function(a){"console"in b?"function"==typeof b.console.warn?b.console.warn(a):"function"==typeof b.console.log&&b.console.log(a):alert(a)},getValue:function(a,b){var c=b?b.find(a):a;if(c.length>0){var d=c.eq(0).attr("type");return"radio"===d||"checkbox"===d?c.filter(":checked").val()||"":c.val()||""}return!1},validateInput:function(b,c,d,e,f){d=d||a.formUtils.defaultConfig(),c=c||a.formUtils.LANG;var g=this.getValue(b);b.valAttr("skipped",!1).one("beforeValidation",function(){(b.attr("disabled")||!b.is(":visible")&&!d.validateHiddenInputs)&&b.valAttr("skipped",1)}).trigger("beforeValidation",[g,c,d]);var h="true"===b.valAttr("optional"),i=!g&&h,j=b.attr(d.validationRuleAttribute),k=!0,l="",m={isValid:!0,shouldChangeDisplay:!0,errorMsg:""};if(!j||i||b.valAttr("skipped"))return m.shouldChangeDisplay=d.addValidClassOnAll,m;var n=b.valAttr("ignore");return n&&a.each(n.split(""),function(a,b){g=g.replace(new RegExp("\\"+b,"g"),"")}),a.split(j,function(h){0!==h.indexOf("validate_")&&(h="validate_"+h);var i=a.formUtils.validators[h];if(!i)throw new Error('Using undefined validator "'+h+'". Maybe you have forgotten to load the module that "'+h+'" belongs to?');if("validate_checkbox_group"===h&&(b=e.find('[name="'+b.attr("name")+'"]:eq(0)')),("keyup"!==f||i.validateOnKeyUp)&&(k=i.validatorFunction(g,b,d,c,e,f)),!k)return d.validateOnBlur&&b.validateOnKeyUp(c,d),l=a.formUtils.dialogs.resolveErrorMessage(b,i,h,d,c),!1}),k===!1?(b.trigger("validation",!1),m.errorMsg=l,m.isValid=!1,m.shouldChangeDisplay=!0):null===k?m.shouldChangeDisplay=!1:(b.trigger("validation",!0),m.shouldChangeDisplay=!0),"function"==typeof d.onElementValidate&&null!==l&&d.onElementValidate(m.isValid,b,e,l),b.trigger("afterValidation",[m,f]),m},parseDate:function(b,c,d){var e,f,g,h,i=c.replace(/[a-zA-Z]/gi,"").substring(0,1),j="^",k=c.split(i||null);if(a.each(k,function(a,b){j+=(a>0?"\\"+i:"")+"(\\d{"+b.length+"})"}),j+="$",d){var l=[];a.each(b.split(i),function(a,b){1===b.length&&(b="0"+b),l.push(b)}),b=l.join(i)}if(e=b.match(new RegExp(j)),null===e)return!1;var m=function(b,c,d){for(var e=0;e<c.length;e++)if(c[e].substring(0,1)===b)return a.formUtils.parseDateInt(d[e+1]);return-1};return g=m("m",k,e),f=m("d",k,e),h=m("y",k,e),!(2===g&&f>28&&(h%4!==0||h%100===0&&h%400!==0)||2===g&&f>29&&(h%4===0||h%100!==0&&h%400===0)||g>12||0===g)&&(!(this.isShortMonth(g)&&f>30||!this.isShortMonth(g)&&f>31||0===f)&&[h,g,f])},parseDateInt:function(a){return 0===a.indexOf("0")&&(a=a.replace("0","")),parseInt(a,10)},isShortMonth:function(a){return a%2===0&&a<7||a%2!==0&&a>7},lengthRestriction:function(b,c){var d=parseInt(c.text(),10),e=0,f=function(){var a=b.val().length;if(a>d){var f=b.scrollTop();b.val(b.val().substring(0,d)),b.scrollTop(f)}e=d-a,e<0&&(e=0),c.text(e)};a(b).bind("keydown keyup keypress focus blur",f).bind("cut paste",function(){setTimeout(f,100)}),a(document).bind("ready",f)},numericRangeCheck:function(b,c){var d=a.split(c),e=parseInt(c.substr(3),10);return 1===d.length&&c.indexOf("min")===-1&&c.indexOf("max")===-1&&(d=[c,c]),2===d.length&&(b<parseInt(d[0],10)||b>parseInt(d[1],10))?["out",d[0],d[1]]:0===c.indexOf("min")&&b<e?["min",e]:0===c.indexOf("max")&&b>e?["max",e]:["ok"]},_numSuggestionElements:0,_selectedSuggestion:null,_previousTypedVal:null,suggest:function(b,d,e){var f={css:{maxHeight:"150px",background:"#FFF",lineHeight:"150%",textDecoration:"underline",overflowX:"hidden",overflowY:"auto",border:"#CCC solid 1px",borderTop:"none",cursor:"pointer"},activeSuggestionCSS:{background:"#E9E9E9"}},g=function(a,b){var c=b.offset();a.css({width:b.outerWidth(),left:c.left+"px",top:c.top+b.outerHeight()+"px"})};e&&a.extend(f,e),f.css.position="absolute",f.css["z-index"]=9999,b.attr("autocomplete","off"),0===this._numSuggestionElements&&c.bind("resize",function(){a(".jquery-form-suggestions").each(function(){var b=a(this),c=b.attr("data-suggest-container");g(b,a(".suggestions-"+c).eq(0))})}),this._numSuggestionElements++;var h=function(b){var c=b.valAttr("suggestion-nr");a.formUtils._selectedSuggestion=null,a.formUtils._previousTypedVal=null,a(".jquery-form-suggestion-"+c).fadeOut("fast")};return b.data("suggestions",d).valAttr("suggestion-nr",this._numSuggestionElements).unbind("focus.suggest").bind("focus.suggest",function(){a(this).trigger("keyup"),a.formUtils._selectedSuggestion=null}).unbind("keyup.suggest").bind("keyup.suggest",function(){var c=a(this),d=[],e=a.trim(c.val()).toLocaleLowerCase();if(e!==a.formUtils._previousTypedVal){a.formUtils._previousTypedVal=e;var i=!1,j=c.valAttr("suggestion-nr"),k=a(".jquery-form-suggestion-"+j);if(k.scrollTop(0),""!==e){var l=e.length>2;a.each(c.data("suggestions"),function(a,b){var c=b.toLocaleLowerCase();return c===e?(d.push("<strong>"+b+"</strong>"),i=!0,!1):void((0===c.indexOf(e)||l&&c.indexOf(e)>-1)&&d.push(b.replace(new RegExp(e,"gi"),"<strong>$&</strong>")))})}i||0===d.length&&k.length>0?k.hide():d.length>0&&0===k.length?(k=a("<div></div>").css(f.css).appendTo("body"),b.addClass("suggestions-"+j),k.attr("data-suggest-container",j).addClass("jquery-form-suggestions").addClass("jquery-form-suggestion-"+j)):d.length>0&&!k.is(":visible")&&k.show(),d.length>0&&e.length!==d[0].length&&(g(k,c),k.html(""),a.each(d,function(b,d){a("<div></div>").append(d).css({overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",padding:"5px"}).addClass("form-suggest-element").appendTo(k).click(function(){c.focus(),c.val(a(this).text()),c.trigger("change"),h(c)})}))}}).unbind("keydown.validation").bind("keydown.validation",function(b){var c,d,e=b.keyCode?b.keyCode:b.which,g=a(this);if(13===e&&null!==a.formUtils._selectedSuggestion){if(c=g.valAttr("suggestion-nr"),d=a(".jquery-form-suggestion-"+c),d.length>0){var i=d.find("div").eq(a.formUtils._selectedSuggestion).text();g.val(i),g.trigger("change"),h(g),b.preventDefault()}}else{c=g.valAttr("suggestion-nr"),d=a(".jquery-form-suggestion-"+c);var j=d.children();if(j.length>0&&a.inArray(e,[38,40])>-1){38===e?(null===a.formUtils._selectedSuggestion?a.formUtils._selectedSuggestion=j.length-1:a.formUtils._selectedSuggestion--,a.formUtils._selectedSuggestion<0&&(a.formUtils._selectedSuggestion=j.length-1)):40===e&&(null===a.formUtils._selectedSuggestion?a.formUtils._selectedSuggestion=0:a.formUtils._selectedSuggestion++,a.formUtils._selectedSuggestion>j.length-1&&(a.formUtils._selectedSuggestion=0));var k=d.innerHeight(),l=d.scrollTop(),m=d.children().eq(0).outerHeight(),n=m*a.formUtils._selectedSuggestion;return(n<l||n>l+k)&&d.scrollTop(n),j.removeClass("active-suggestion").css("background","none").eq(a.formUtils._selectedSuggestion).addClass("active-suggestion").css(f.activeSuggestionCSS),b.preventDefault(),!1}}}).unbind("blur.suggest").bind("blur.suggest",function(){h(a(this))}),b},LANG:{errorTitle:"Form submission failed!",requiredField:"This is a required field",requiredFields:"You have not answered all required fields",badTime:"You have not given a correct time",badEmail:"You have not given a correct e-mail address",badTelephone:"You have not given a correct phone number",badSecurityAnswer:"You have not given a correct answer to the security question",badDate:"You have not given a correct date",lengthBadStart:"The input value must be between ",lengthBadEnd:" characters",lengthTooLongStart:"The input value is longer than ",lengthTooShortStart:"The input value is shorter than ",notConfirmed:"Input values could not be confirmed",badDomain:"Incorrect domain value",badUrl:"The input value is not a correct URL",badCustomVal:"The input value is incorrect",andSpaces:" and spaces ",badInt:"The input value was not a correct number",badSecurityNumber:"Your social security number was incorrect",badUKVatAnswer:"Incorrect UK VAT Number",badUKNin:"Incorrect UK NIN",badUKUtr:"Incorrect UK UTR Number",badStrength:"The password isn't strong enough",badNumberOfSelectedOptionsStart:"You have to choose at least ",badNumberOfSelectedOptionsEnd:" answers",badAlphaNumeric:"The input value can only contain alphanumeric characters ",badAlphaNumericExtra:" and ",wrongFileSize:"The file you are trying to upload is too large (max %s)",wrongFileType:"Only files of type %s is allowed",groupCheckedRangeStart:"Please choose between ",groupCheckedTooFewStart:"Please choose at least ",groupCheckedTooManyStart:"Please choose a maximum of ",groupCheckedEnd:" item(s)",badCreditCard:"The credit card number is not correct",badCVV:"The CVV number was not correct",wrongFileDim:"Incorrect image dimensions,",imageTooTall:"the image can not be taller than",imageTooWide:"the image can not be wider than",imageTooSmall:"the image was too small",min:"min",max:"max",imageRatioNotAccepted:"Image ratio is not be accepted",badBrazilTelephoneAnswer:"The phone number entered is invalid",badBrazilCEPAnswer:"The CEP entered is invalid",badBrazilCPFAnswer:"The CPF entered is invalid",badPlPesel:"The PESEL entered is invalid",badPlNip:"The NIP entered is invalid",badPlRegon:"The REGON entered is invalid",badreCaptcha:"Please confirm that you are not a bot",passwordComplexityStart:"Password must contain at least ",passwordComplexitySeparator:", ",passwordComplexityUppercaseInfo:" uppercase letter(s)",passwordComplexityLowercaseInfo:" lowercase letter(s)",passwordComplexitySpecialCharsInfo:" special character(s)",passwordComplexityNumericCharsInfo:" numeric character(s)",passwordComplexityEnd:"."}})}(a,window),function(a){a.formUtils.addValidator({name:"email",validatorFunction:function(b){var c=b.toLowerCase().split("@"),d=c[0],e=c[1];if(d&&e){if(0===d.indexOf('"')){var f=d.length;if(d=d.replace(/\"/g,""),d.length!==f-2)return!1}return a.formUtils.validators.validate_domain.validatorFunction(c[1])&&0!==d.indexOf(".")&&"."!==d.substring(d.length-1,d.length)&&d.indexOf("..")===-1&&!/[^\w\+\.\-\#\-\_\~\!\$\&\'\(\)\*\+\,\;\=\:]/.test(d)}return!1},errorMessage:"",errorMessageKey:"badEmail"}),a.formUtils.addValidator({name:"domain",validatorFunction:function(a){return a.length>0&&a.length<=253&&!/[^a-zA-Z0-9]/.test(a.slice(-2))&&!/[^a-zA-Z0-9]/.test(a.substr(0,1))&&!/[^a-zA-Z0-9\.\-]/.test(a)&&1===a.split("..").length&&a.split(".").length>1},errorMessage:"",errorMessageKey:"badDomain"}),a.formUtils.addValidator({name:"required",validatorFunction:function(b,c,d,e,f){switch(c.attr("type")){case"checkbox":return c.is(":checked");case"radio":return f.find('input[name="'+c.attr("name")+'"]').filter(":checked").length>0;default:return""!==a.trim(b)}},errorMessage:"",errorMessageKey:function(a){return"top"===a.errorMessagePosition||"function"==typeof a.errorMessagePosition?"requiredFields":"requiredField"}}),a.formUtils.addValidator({name:"length",validatorFunction:function(b,c,d,e){var f=c.valAttr("length"),g=c.attr("type");if(void 0===f)return alert('Please add attribute "data-validation-length" to '+c[0].nodeName+" named "+c.attr("name")),!0;var h,i="file"===g&&void 0!==c.get(0).files?c.get(0).files.length:b.length,j=a.formUtils.numericRangeCheck(i,f);switch(j[0]){case"out":this.errorMessage=e.lengthBadStart+f+e.lengthBadEnd,h=!1;break;case"min":this.errorMessage=e.lengthTooShortStart+j[1]+e.lengthBadEnd,h=!1;break;case"max":this.errorMessage=e.lengthTooLongStart+j[1]+e.lengthBadEnd,h=!1;break;default:h=!0}return h},errorMessage:"",errorMessageKey:""}),a.formUtils.addValidator({name:"url",validatorFunction:function(b){var c=/^(https?|ftp):\/\/((((\w|-|\.|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])(\w|-|\.|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])(\w|-|\.|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/(((\w|-|\.|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/((\w|-|\.|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|\[|\]|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#(((\w|-|\.|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i;if(c.test(b)){var d=b.split("://")[1],e=d.indexOf("/");return e>-1&&(d=d.substr(0,e)),a.formUtils.validators.validate_domain.validatorFunction(d)}return!1},errorMessage:"",errorMessageKey:"badUrl"}),a.formUtils.addValidator({name:"number",validatorFunction:function(a,b,c){if(""!==a){var d,e,f=b.valAttr("allowing")||"",g=b.valAttr("decimal-separator")||c.decimalSeparator,h=!1,i=b.valAttr("step")||"",j=!1,k=b.attr("data-sanitize")||"",l=k.match(/(^|[\s])numberFormat([\s]|$)/i);if(l){if(!window.numeral)throw new ReferenceError("The data-sanitize value numberFormat cannot be used without the numeral library. Please see Data Validation in http://www.formvalidator.net for more information.");a.length&&(a=String(numeral().unformat(a)))}if(f.indexOf("number")===-1&&(f+=",number"),f.indexOf("negative")===-1&&0===a.indexOf("-"))return!1;if(f.indexOf("range")>-1&&(d=parseFloat(f.substring(f.indexOf("[")+1,f.indexOf(";"))),e=parseFloat(f.substring(f.indexOf(";")+1,f.indexOf("]"))),h=!0),""!==i&&(j=!0),","===g){if(a.indexOf(".")>-1)return!1;a=a.replace(",",".")}if(""===a.replace(/[0-9-]/g,"")&&(!h||a>=d&&a<=e)&&(!j||a%i===0))return!0;if(f.indexOf("float")>-1&&null!==a.match(new RegExp("^([0-9-]+)\\.([0-9]+)$"))&&(!h||a>=d&&a<=e)&&(!j||a%i===0))return!0}return!1},errorMessage:"",errorMessageKey:"badInt"}),a.formUtils.addValidator({name:"alphanumeric",validatorFunction:function(b,c,d,e){var f="^([a-zA-Z0-9",g="]+)$",h=c.valAttr("allowing"),i="";if(h){i=f+h+g;var j=h.replace(/\\/g,"");j.indexOf(" ")>-1&&(j=j.replace(" ",""),j+=e.andSpaces||a.formUtils.LANG.andSpaces),this.errorMessage=e.badAlphaNumeric+e.badAlphaNumericExtra+j}else i=f+g,this.errorMessage=e.badAlphaNumeric;return new RegExp(i).test(b)},errorMessage:"",errorMessageKey:""}),a.formUtils.addValidator({name:"custom",validatorFunction:function(a,b){var c=new RegExp(b.valAttr("regexp"));return c.test(a)},errorMessage:"",errorMessageKey:"badCustomVal"}),a.formUtils.addValidator({name:"date",validatorFunction:function(b,c,d){var e=c.valAttr("format")||d.dateFormat||"yyyy-mm-dd",f="false"===c.valAttr("require-leading-zero");return a.formUtils.parseDate(b,e,f)!==!1},errorMessage:"",errorMessageKey:"badDate"}),a.formUtils.addValidator({name:"checkbox_group",validatorFunction:function(b,c,d,e,f){var g=!0,h=c.attr("name"),i=a('input[type=checkbox][name^="'+h+'"]',f),j=i.filter(":checked").length,k=c.valAttr("qty");if(void 0===k){var l=c.get(0).nodeName;alert('Attribute "data-validation-qty" is missing from '+l+" named "+c.attr("name"))}var m=a.formUtils.numericRangeCheck(j,k);switch(m[0]){case"out":this.errorMessage=e.groupCheckedRangeStart+k+e.groupCheckedEnd,g=!1;break;case"min":this.errorMessage=e.groupCheckedTooFewStart+m[1]+e.groupCheckedEnd,g=!1;break;case"max":this.errorMessage=e.groupCheckedTooManyStart+m[1]+e.groupCheckedEnd,g=!1;break;default:g=!0}if(!g){var n=function(){i.unbind("click",n),i.filter("*[data-validation]").validateInputOnBlur(e,d,!1,"blur")};i.bind("click",n)}return g}})}(a)});
+(function (lib, img, cjs, ss, an) {
+
+var p; // shortcut to reference prototypes
+lib.webFontTxtInst = {}; 
+var loadedTypekitCount = 0;
+var loadedGoogleCount = 0;
+var gFontsUpdateCacheList = [];
+var tFontsUpdateCacheList = [];
+lib.ssMetadata = [];
+
+
+
+lib.updateListCache = function (cacheList) {		
+	for(var i = 0; i < cacheList.length; i++) {		
+		if(cacheList[i].cacheCanvas)		
+			cacheList[i].updateCache();		
+	}		
+};		
+
+lib.addElementsToCache = function (textInst, cacheList) {		
+	var cur = textInst;		
+	while(cur != exportRoot) {		
+		if(cacheList.indexOf(cur) != -1)		
+			break;		
+		cur = cur.parent;		
+	}		
+	if(cur != exportRoot) {		
+		var cur2 = textInst;		
+		var index = cacheList.indexOf(cur);		
+		while(cur2 != cur) {		
+			cacheList.splice(index, 0, cur2);		
+			cur2 = cur2.parent;		
+			index++;		
+		}		
+	}		
+	else {		
+		cur = textInst;		
+		while(cur != exportRoot) {		
+			cacheList.push(cur);		
+			cur = cur.parent;		
+		}		
+	}		
+};		
+
+lib.gfontAvailable = function(family, totalGoogleCount) {		
+	lib.properties.webfonts[family] = true;		
+	var txtInst = lib.webFontTxtInst && lib.webFontTxtInst[family] || [];		
+	for(var f = 0; f < txtInst.length; ++f)		
+		lib.addElementsToCache(txtInst[f], gFontsUpdateCacheList);		
+
+	loadedGoogleCount++;		
+	if(loadedGoogleCount == totalGoogleCount) {		
+		lib.updateListCache(gFontsUpdateCacheList);		
+	}		
+};		
+
+lib.tfontAvailable = function(family, totalTypekitCount) {		
+	lib.properties.webfonts[family] = true;		
+	var txtInst = lib.webFontTxtInst && lib.webFontTxtInst[family] || [];		
+	for(var f = 0; f < txtInst.length; ++f)		
+		lib.addElementsToCache(txtInst[f], tFontsUpdateCacheList);		
+
+	loadedTypekitCount++;		
+	if(loadedTypekitCount == totalTypekitCount) {		
+		lib.updateListCache(tFontsUpdateCacheList);		
+	}		
+};
+// symbols:
+// helper functions:
+
+function mc_symbol_clone() {
+	var clone = this._cloneProps(new this.constructor(this.mode, this.startPosition, this.loop));
+	clone.gotoAndStop(this.currentFrame);
+	clone.paused = this.paused;
+	clone.framerate = this.framerate;
+	return clone;
+}
+
+function getMCSymbolPrototype(symbol, nominalBounds, frameBounds) {
+	var prototype = cjs.extend(symbol, cjs.MovieClip);
+	prototype.clone = mc_symbol_clone;
+	prototype.nominalBounds = nominalBounds;
+	prototype.frameBounds = frameBounds;
+	return prototype;
+	}
+
+
+(lib.Symbol13 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AgqBSQgRgRAAgZIABgNQAEgiAbgnQAOgUAfghIAYAYQgcAcgNATIgFAJIAEAAQAZAAARASQASAQAAAZQAAAYgSASQgSASgYAAQgXAAgTgSgAgRAWQgIAHAAALQAAALAIAHQAHAHAKAAQAKAAAIgHQAHgHABgLQgBgLgHgHQgIgIgKAAQgKAAgHAIg");
+	this.shape.setTransform(16.6,27.3,2.734,2.734,0,0,0,0.1,0);
+
+	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol13, new cjs.Rectangle(0,0,32.8,54.6), null);
+
+
+(lib.Symbol12 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AAABkIAAinIgeAAIAHggIA2AAIAADHg");
+	this.shape.setTransform(8.6,27.3,2.734,2.734);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AAABkIAAinIgeAAIAHggIA2AAIAADHg");
+	this.shape_1.setTransform(8.5,27.3,2.734,2.734);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol12, new cjs.Rectangle(0,0,17.1,54.6), null);
+
+
+(lib.Symbol11 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AgpBSQgSgRAAgZIAjAAQAAALAHAHQAIAIAKAAQAKAAAIgIQAHgHAAgLQAAgLgHgHQgIgIgKAAIgGAAIAAghIAGAAQAJAAAIgHQAGgHAAgJQAAgKgGgIQgIgHgJAAQgJAAgIAHQgHAIAAAKIggAAQAAgYAQgQQARgRAXAAQAWAAARARQARAQAAAYQAAAWgRAQQAUASAAAaQAAAZgSARQgRASgYAAQgZAAgRgSg");
+	this.shape.setTransform(16.5,27.3,2.734,2.734);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AgpBSQgSgRAAgZIAjAAQAAALAHAHQAIAIAKAAQAKAAAIgIQAHgHAAgLQAAgLgHgHQgIgIgKAAIgGAAIAAghIAGAAQAJAAAIgHQAGgHAAgJQAAgKgGgIQgIgHgJAAQgJAAgIAHQgHAIAAAKIggAAQAAgYAQgQQARgRAXAAQAWAAARARQARAQAAAYQAAAWgRAQQAUASAAAaQAAAZgSARQgRASgYAAQgZAAgRgSg");
+	this.shape_1.setTransform(16.4,27.3,2.734,2.734);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol11, new cjs.Rectangle(0,0,32.9,54.6), null);
+
+
+(lib.Symbol9 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AEoAYIgDgCIgEgCIgEgEIAEgDQABADADACQACABAEAAIAEAAIADgCQAAAAABgBQAAAAAAAAQABAAAAgBQAAAAAAAAIABgEIgBgEIgDgDIgJgEIgEAAIgDgCIgCgEIgBgEIABgGIADgDQACgCADgBIAFgBQAEAAADABIAFAFIgDADIgEgDIgFgBQgEgBgDADQgCACAAAEIABADIACADIAPAFIADAFIACAFIgBAFIgDAEIgFADIgGABgACmAVQgEgBgDgEIgEgHIgCgJQAAgEACgEIAFgIIAIgFQADgCAGAAIAFAAIAFADIABAFQgDgDgCAAIgGAAQgGAAgCABQgEACgCADIgEAGIgBAGIABAIQACADADACQACAEAEABIAHABIAFAAIAFgDIAAAFIgFACIgGABQgFAAgFgDgAiZAVQgEgBgEgEIgEgHIgCgJQAAgEACgEIAFgIIAIgFQAEgCAFAAIAFAAIAFADIABAFQgDgDgCAAIgGAAQgFAAgDABQgEACgCADIgEAGIgBAGIABAIIAFAFQACADAEACIAIABIAEAAIAFgDIAAAFIgFACIgGABQgEAAgFgDgADqAXIAAgoIgLAAIAAgFIAcAAIAAAFIgMAAIAAAogABbAXIAAgtIAZAAIAAAFIgUAAIAAAQIASAAIAAADIgSAAIAAAQIAUAAIAAAFgAAmAXIAAgoIgMAAIAAgFIAcAAIAAAFIgMAAIAAAogAgPAXIAAgtIAEAAIAAAtgAg9AXIAAgVIgcAAIAAAVIgEAAIAAgtIAEAAIAAAVIAcAAIAAgVIAEAAIAAAtgAjOAXIgSgWIAAAWIgFAAIAAgtIAJAAQAEAAADACQADABACACIADADIAAAGIAAAEIgDAEQAAAAAAAAQgBABAAAAQgBABAAAAQgBAAAAAAQgCACgDAAIAQATgAjgAAIAFAAIAEAAIADgBIACgDIABgEIgBgDIgCgEIgDgCIgEAAIgFAAgAkPAXIgJgSIgTAAIgJASIgFAAIAYguIAXAugAkpAAIAPAAIgHgOg");
+	this.shape.setTransform(86.2,7.1,2.74,2.74,0,0,0,0.1,0.2);
+
+	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol9, new cjs.Rectangle(0,0,172,13.2), null);
+
+
+(lib.Symbol8 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AhzDhQgwgwAAhEIBeAAQAAAeAVAUQAUAVAcAAQAdAAAVgVQAVgUAAgeQAAgdgVgVQgVgUgdAAIgSAAIAAhcIASAAQAbAAAUgTQASgSAAgbQAAgcgSgUQgUgTgbAAQgbAAgSATQgUAUAAAcIhXAAQAAhBAtgtQAsgtA/AAQBBAAArAtQAtAtAABBQAAA9grAsQA2AyAABHQAABEgwAwQgvAwhFAAQhDAAgwgwg");
+	this.shape.setTransform(16.7,27.4,1,1,0,0,0,0.3,0.1);
+
+	this.timeline.addTween(cjs.Tween.get(this.shape).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol8, new cjs.Rectangle(0,0,32.8,54.6), null);
+
+
+(lib.Symbol7 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AgDBkIAAjHIAHAAIAADHg");
+	this.shape.setTransform(1.1,27.3,2.734,2.734);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AgDBkIAAjHIAHAAIAADHg");
+	this.shape_1.setTransform(1,27.3,2.734,2.734);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol7, new cjs.Rectangle(0,0,2.2,54.6), null);
+
+
+(lib.Symbol6 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AgqBSQgRgRAAgZIABgNQAEgiAbgnQAOgUAfghIAYAYQgcAcgNATIgFAJIAEAAQAZAAARASQASAQAAAZQAAAYgSASQgSASgYAAQgXAAgTgSgAgRAWQgIAHAAALQAAALAIAHQAHAHAKAAQAKAAAIgHQAHgHABgLQgBgLgHgHQgIgIgKAAQgKAAgHAIg");
+	this.shape.setTransform(16.7,27.3,2.734,2.734,0,0,0,0.1,0);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AgqBSQgRgRAAgZIABgNQAEgiAbgnQAOgUAfghIAYAYQgcAcgNATIgFAJIAEAAQAZAAARASQASAQAAAZQAAAYgSASQgSASgYAAQgXAAgTgSgAgRAWQgIAHAAALQAAALAIAHQAHAHAKAAQAKAAAIgHQAHgHABgLQgBgLgHgHQgIgIgKAAQgKAAgHAIg");
+	this.shape_1.setTransform(16.6,27.3,2.734,2.734,0,0,0,0.1,0);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol6, new cjs.Rectangle(0,0,32.9,54.6), null);
+
+
+(lib.Symbol5 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AAABkIAAinIgeAAIAHggIA2AAIAADHg");
+	this.shape.setTransform(8.6,27.3,2.734,2.734);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AAABkIAAinIgeAAIAHggIA2AAIAADHg");
+	this.shape_1.setTransform(8.5,27.3,2.734,2.734);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol5, new cjs.Rectangle(0,0,17.1,54.6), null);
+
+
+(lib.Symbol4 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AgpBSQgSgRAAgZIAjAAQAAALAHAHQAIAIAKAAQAKAAAIgIQAHgHAAgLQAAgLgHgHQgIgIgKAAIgGAAIAAghIAGAAQAJAAAIgHQAGgHAAgJQAAgKgGgIQgIgHgJAAQgJAAgIAHQgHAIAAAKIggAAQAAgYAQgQQARgRAXAAQAWAAARARQARAQAAAYQAAAWgRAQQAUASAAAaQAAAZgSARQgRASgYAAQgZAAgRgSg");
+	this.shape.setTransform(16.5,27.3,2.734,2.734);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AgpBSQgSgRAAgZIAjAAQAAALAHAHQAIAIAKAAQAKAAAIgIQAHgHAAgLQAAgLgHgHQgIgIgKAAIgGAAIAAghIAGAAQAJAAAIgHQAGgHAAgJQAAgKgGgIQgIgHgJAAQgJAAgIAHQgHAIAAAKIggAAQAAgYAQgQQARgRAXAAQAWAAARARQARAQAAAYQAAAWgRAQQAUASAAAaQAAAZgSARQgRASgYAAQgZAAgRgSg");
+	this.shape_1.setTransform(16.4,27.3,2.734,2.734);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.shape_1},{t:this.shape}]}).wait(1));
+
+}).prototype = getMCSymbolPrototype(lib.Symbol4, new cjs.Rectangle(0,0,32.9,54.6), null);
+
+
+(lib.Symbol2 = function(mode,startPosition,loop) {
+	this.initialize(mode,startPosition,loop,{});
+
+	// Layer 1
+	this.instance = new lib.Symbol8();
+	this.instance.parent = this;
+	this.instance.setTransform(16.4,27.2,1,1,0,0,0,16.4,27.2);
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(4));
+
+}).prototype = p = new cjs.MovieClip();
+p.nominalBounds = new cjs.Rectangle(0,0,32.8,54.6);
+
+
+// stage content:
+(lib._33161 = function(mode,startPosition,loop) {
+if (loop == null) { loop = false; }	this.initialize(mode,startPosition,loop,{});
+
+	// Слой 1
+	this.instance = new lib.Symbol9();
+	this.instance.parent = this;
+	this.instance.setTransform(300.3,114.2,1,1,0,0,0,86,6.5);
+	this.instance.alpha = 0;
+	this.instance._off = true;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance).wait(70).to({_off:false},0).wait(1).to({regY:6.6,y:114.3,alpha:0.042},0).wait(1).to({alpha:0.083},0).wait(1).to({alpha:0.125},0).wait(1).to({alpha:0.167},0).wait(1).to({alpha:0.208},0).wait(1).to({alpha:0.25},0).wait(1).to({alpha:0.292},0).wait(1).to({alpha:0.333},0).wait(1).to({alpha:0.375},0).wait(1).to({alpha:0.417},0).wait(1).to({alpha:0.458},0).wait(1).to({alpha:0.5},0).wait(1).to({alpha:0.542},0).wait(1).to({alpha:0.583},0).wait(1).to({alpha:0.625},0).wait(1).to({alpha:0.667},0).wait(1).to({alpha:0.708},0).wait(1).to({alpha:0.75},0).wait(1).to({alpha:0.792},0).wait(1).to({alpha:0.833},0).wait(1).to({alpha:0.875},0).wait(1).to({alpha:0.917},0).wait(1).to({alpha:0.958},0).wait(1).to({alpha:1},0).wait(1));
+
+	// 3
+	this.instance_1 = new lib.Symbol2();
+	this.instance_1.parent = this;
+	this.instance_1.setTransform(31.1,49.9,1,1,0,0,0,16.4,27.2);
+	this.instance_1.alpha = 0;
+
+	this.timeline.addTween(cjs.Tween.get(this.instance_1).wait(1).to({regY:27.3,y:50,alpha:0.053},0).wait(1).to({alpha:0.105},0).wait(1).to({alpha:0.158},0).wait(1).to({alpha:0.211},0).wait(1).to({alpha:0.263},0).wait(1).to({alpha:0.316},0).wait(1).to({alpha:0.368},0).wait(1).to({alpha:0.421},0).wait(1).to({alpha:0.474},0).wait(1).to({alpha:0.526},0).wait(1).to({alpha:0.579},0).wait(1).to({alpha:0.632},0).wait(1).to({alpha:0.684},0).wait(1).to({alpha:0.737},0).wait(1).to({alpha:0.789},0).wait(1).to({alpha:0.842},0).wait(1).to({alpha:0.895},0).wait(1).to({alpha:0.947},0).wait(1).to({alpha:1},0).wait(1).to({regY:27.2,y:49.9},0).wait(1).to({regY:27.3,x:41.8,y:50},0).wait(1).to({x:52},0).wait(1).to({x:61.5},0).wait(1).to({x:70.4},0).wait(1).to({x:78.8},0).wait(1).to({x:86.7},0).wait(1).to({x:94.1},0).wait(1).to({x:101},0).wait(1).to({x:107.5},0).wait(1).to({x:113.7},0).wait(1).to({x:119.4},0).wait(1).to({x:124.8},0).wait(1).to({x:129.9},0).wait(1).to({x:134.7},0).wait(1).to({x:139.2},0).wait(1).to({x:143.4},0).wait(1).to({x:147.4},0).wait(1).to({x:151.2},0).wait(1).to({x:154.8},0).wait(1).to({x:158.2},0).wait(1).to({x:161.4},0).wait(1).to({x:164.5},0).wait(1).to({x:167.4},0).wait(1).to({x:170.2},0).wait(1).to({x:172.9},0).wait(1).to({x:175.4},0).wait(1).to({x:177.9},0).wait(1).to({x:180.3},0).wait(1).to({x:182.6},0).wait(1).to({x:184.9},0).wait(1).to({x:187.1},0).wait(1).to({x:189.2},0).wait(1).to({x:191.3},0).wait(1).to({x:193.3},0).wait(1).to({x:195.3},0).wait(1).to({x:197.3},0).wait(1).to({x:199.3},0).wait(1).to({x:201.2},0).wait(1).to({x:203.1},0).wait(1).to({x:205},0).wait(1).to({x:206.9},0).wait(1).to({x:208.8},0).wait(1).to({x:210.6},0).wait(1).to({x:212.5},0).wait(1).to({x:214.4},0).wait(1).to({x:216.2},0).wait(1).to({x:218.1},0).wait(1).to({x:219.9},0).wait(1).to({x:221.8},0).wait(1).to({x:223.6},0).wait(1).to({x:225.5},0).wait(1).to({x:227.3},0).wait(1).to({x:229.2},0).wait(1).to({x:231.1},0).wait(1).to({regY:27.2,y:49.9},0).wait(20));
+
+	// -3
+	this.instance_2 = new lib.Symbol11();
+	this.instance_2.parent = this;
+	this.instance_2.setTransform(210.3,50,1,1,0,0,0,16.4,27.3);
+	this.instance_2.alpha = 0;
+
+	this.instance_3 = new lib.Symbol4();
+	this.instance_3.parent = this;
+	this.instance_3.setTransform(210.3,49.9,1,1,0,0,0,16.4,27.2);
+	this.instance_3._off = true;
+
+	this.shape = new cjs.Shape();
+	this.shape.graphics.f("#FFFFFF").s().p("AgpBSQgSgRAAgZIAjAAQAAALAHAHQAIAIAKAAQAKAAAIgIQAHgHAAgLQAAgLgHgHQgIgIgKAAIgGAAIAAghIAGAAQAJAAAIgHQAGgHAAgJQAAgKgGgIQgIgHgJAAQgJAAgIAHQgHAIAAAKIggAAQAAgYAQgQQARgRAXAAQAWAAARARQARAQAAAYQAAAWgRAQQAUASAAAaQAAAZgSARQgRASgYAAQgZAAgRgSg");
+	this.shape.setTransform(270.4,50,2.734,2.734);
+
+	this.shape_1 = new cjs.Shape();
+	this.shape_1.graphics.f("#FFFFFF").s().p("AgpBSQgSgRAAgZIAjAAQAAALAHAHQAIAIAKAAQAKAAAIgIQAHgHAAgLQAAgLgHgHQgIgIgKAAIgGAAIAAghIAGAAQAJAAAIgHQAGgHAAgJQAAgKgGgIQgIgHgJAAQgJAAgIAHQgHAIAAAKIggAAQAAgYAQgQQARgRAXAAQAWAAARARQARAQAAAYQAAAWgRAQQAUASAAAaQAAAZgSARQgRASgYAAQgZAAgRgSg");
+	this.shape_1.setTransform(270.3,50,2.734,2.734);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_2}]}).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_2}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.instance_3}]},1).to({state:[{t:this.shape_1},{t:this.shape}]},1).wait(20));
+	this.timeline.addTween(cjs.Tween.get(this.instance_2).wait(1).to({alpha:0.053},0).wait(1).to({alpha:0.105},0).wait(1).to({alpha:0.158},0).wait(1).to({alpha:0.211},0).wait(1).to({alpha:0.263},0).wait(1).to({alpha:0.316},0).wait(1).to({alpha:0.368},0).wait(1).to({alpha:0.421},0).wait(1).to({alpha:0.474},0).wait(1).to({alpha:0.526},0).wait(1).to({alpha:0.579},0).wait(1).to({alpha:0.632},0).wait(1).to({alpha:0.684},0).wait(1).to({alpha:0.737},0).wait(1).to({alpha:0.789},0).wait(1).to({alpha:0.842},0).wait(1).to({alpha:0.895},0).wait(1).to({alpha:0.947},0).wait(1).to({alpha:1},0).to({_off:true},1).wait(75));
+	this.timeline.addTween(cjs.Tween.get(this.instance_3).wait(20).to({_off:false},0).wait(1).to({regY:27.3,x:213.5,y:50},0).wait(1).to({x:216.6},0).wait(1).to({x:219.4},0).wait(1).to({x:222.1},0).wait(1).to({x:224.6},0).wait(1).to({x:227},0).wait(1).to({x:229.2},0).wait(1).to({x:231.3},0).wait(1).to({x:233.2},0).wait(1).to({x:235.1},0).wait(1).to({x:236.8},0).wait(1).to({x:238.4},0).wait(1).to({x:240},0).wait(1).to({x:241.4},0).wait(1).to({x:242.7},0).wait(1).to({x:244},0).wait(1).to({x:245.2},0).wait(1).to({x:246.3},0).wait(1).to({x:247.4},0).wait(1).to({x:248.4},0).wait(1).to({x:249.4},0).wait(1).to({x:250.3},0).wait(1).to({x:251.2},0).wait(1).to({x:252},0).wait(1).to({x:252.8},0).wait(1).to({x:253.6},0).wait(1).to({x:254.4},0).wait(1).to({x:255.1},0).wait(1).to({x:255.8},0).wait(1).to({x:256.4},0).wait(1).to({x:257.1},0).wait(1).to({x:257.7},0).wait(1).to({x:258.4},0).wait(1).to({x:259},0).wait(1).to({x:259.6},0).wait(1).to({x:260.2},0).wait(1).to({x:260.8},0).wait(1).to({x:261.3},0).wait(1).to({x:261.9},0).wait(1).to({x:262.5},0).wait(1).to({x:263.1},0).wait(1).to({x:263.6},0).wait(1).to({x:264.2},0).wait(1).to({x:264.7},0).wait(1).to({x:265.3},0).wait(1).to({x:265.9},0).wait(1).to({x:266.4},0).wait(1).to({x:267},0).wait(1).to({x:267.5},0).wait(1).to({x:268.1},0).wait(1).to({x:268.6},0).wait(1).to({x:269.2},0).wait(1).to({x:269.7},0).wait(1).to({x:270.3},0).to({_off:true},1).wait(20));
+
+	// --1
+	this.instance_4 = new lib.Symbol12();
+	this.instance_4.parent = this;
+	this.instance_4.setTransform(396.3,50,1,1,0,0,0,8.5,27.3);
+	this.instance_4.alpha = 0;
+
+	this.instance_5 = new lib.Symbol5();
+	this.instance_5.parent = this;
+	this.instance_5.setTransform(396.3,49.9,1,1,0,0,0,8.5,27.2);
+	this.instance_5._off = true;
+
+	this.shape_2 = new cjs.Shape();
+	this.shape_2.graphics.f("#FFFFFF").s().p("AAABkIAAinIgeAAIAHggIA2AAIAADHg");
+	this.shape_2.setTransform(336.4,50,2.734,2.734);
+
+	this.shape_3 = new cjs.Shape();
+	this.shape_3.graphics.f("#FFFFFF").s().p("AAABkIAAinIgeAAIAHggIA2AAIAADHg");
+	this.shape_3.setTransform(336.3,50,2.734,2.734);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_4}]}).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_4}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.instance_5}]},1).to({state:[{t:this.shape_3},{t:this.shape_2}]},1).wait(20));
+	this.timeline.addTween(cjs.Tween.get(this.instance_4).wait(1).to({alpha:0.053},0).wait(1).to({alpha:0.105},0).wait(1).to({alpha:0.158},0).wait(1).to({alpha:0.211},0).wait(1).to({alpha:0.263},0).wait(1).to({alpha:0.316},0).wait(1).to({alpha:0.368},0).wait(1).to({alpha:0.421},0).wait(1).to({alpha:0.474},0).wait(1).to({alpha:0.526},0).wait(1).to({alpha:0.579},0).wait(1).to({alpha:0.632},0).wait(1).to({alpha:0.684},0).wait(1).to({alpha:0.737},0).wait(1).to({alpha:0.789},0).wait(1).to({alpha:0.842},0).wait(1).to({alpha:0.895},0).wait(1).to({alpha:0.947},0).wait(1).to({alpha:1},0).to({_off:true},1).wait(75));
+	this.timeline.addTween(cjs.Tween.get(this.instance_5).wait(20).to({_off:false},0).wait(1).to({regY:27.3,x:393.1,y:50},0).wait(1).to({x:390},0).wait(1).to({x:387.2},0).wait(1).to({x:384.5},0).wait(1).to({x:382},0).wait(1).to({x:379.6},0).wait(1).to({x:377.4},0).wait(1).to({x:375.3},0).wait(1).to({x:373.4},0).wait(1).to({x:371.5},0).wait(1).to({x:369.8},0).wait(1).to({x:368.2},0).wait(1).to({x:366.6},0).wait(1).to({x:365.2},0).wait(1).to({x:363.9},0).wait(1).to({x:362.6},0).wait(1).to({x:361.4},0).wait(1).to({x:360.3},0).wait(1).to({x:359.2},0).wait(1).to({x:358.2},0).wait(1).to({x:357.2},0).wait(1).to({x:356.3},0).wait(1).to({x:355.4},0).wait(1).to({x:354.6},0).wait(1).to({x:353.8},0).wait(1).to({x:353},0).wait(1).to({x:352.2},0).wait(1).to({x:351.5},0).wait(1).to({x:350.8},0).wait(1).to({x:350.2},0).wait(1).to({x:349.5},0).wait(1).to({x:348.9},0).wait(1).to({x:348.2},0).wait(1).to({x:347.6},0).wait(1).to({x:347},0).wait(1).to({x:346.4},0).wait(1).to({x:345.8},0).wait(1).to({x:345.3},0).wait(1).to({x:344.7},0).wait(1).to({x:344.1},0).wait(1).to({x:343.5},0).wait(1).to({x:343},0).wait(1).to({x:342.4},0).wait(1).to({x:341.9},0).wait(1).to({x:341.3},0).wait(1).to({x:340.7},0).wait(1).to({x:340.2},0).wait(1).to({x:339.6},0).wait(1).to({x:339.1},0).wait(1).to({x:338.5},0).wait(1).to({x:338},0).wait(1).to({x:337.4},0).wait(1).to({x:336.9},0).wait(1).to({x:336.3},0).to({_off:true},1).wait(20));
+
+	// ---6
+	this.instance_6 = new lib.Symbol13();
+	this.instance_6.parent = this;
+	this.instance_6.setTransform(569.9,50,1,1,0,0,0,16.4,27.2);
+	this.instance_6.alpha = 0;
+
+	this.instance_7 = new lib.Symbol6();
+	this.instance_7.parent = this;
+	this.instance_7.setTransform(569.8,49.9,1,1,0,0,0,16.4,27.2);
+	this.instance_7._off = true;
+
+	this.shape_4 = new cjs.Shape();
+	this.shape_4.graphics.f("#FFFFFF").s().p("AgqBSQgRgRAAgZIABgNQAEgiAbgnQAOgUAfghIAYAYQgcAcgNATIgFAJIAEAAQAZAAARASQASAQAAAZQAAAYgSASQgSASgYAAQgXAAgTgSgAgRAWQgIAHAAALQAAALAIAHQAHAHAKAAQAKAAAIgHQAHgHABgLQgBgLgHgHQgIgIgKAAQgKAAgHAIg");
+	this.shape_4.setTransform(370.1,50,2.734,2.734,0,0,0,0.1,0);
+
+	this.shape_5 = new cjs.Shape();
+	this.shape_5.graphics.f("#FFFFFF").s().p("AgqBSQgRgRAAgZIABgNQAEgiAbgnQAOgUAfghIAYAYQgcAcgNATIgFAJIAEAAQAZAAARASQASAQAAAZQAAAYgSASQgSASgYAAQgXAAgTgSgAgRAWQgIAHAAALQAAALAIAHQAHAHAKAAQAKAAAIgHQAHgHABgLQgBgLgHgHQgIgIgKAAQgKAAgHAIg");
+	this.shape_5.setTransform(370,50,2.734,2.734,0,0,0,0.1,0);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[{t:this.instance_6}]}).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_6}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.instance_7}]},1).to({state:[{t:this.shape_5},{t:this.shape_4}]},1).wait(20));
+	this.timeline.addTween(cjs.Tween.get(this.instance_6).wait(1).to({regY:27.3,y:50.1,alpha:0.053},0).wait(1).to({alpha:0.105},0).wait(1).to({alpha:0.158},0).wait(1).to({alpha:0.211},0).wait(1).to({alpha:0.263},0).wait(1).to({alpha:0.316},0).wait(1).to({alpha:0.368},0).wait(1).to({alpha:0.421},0).wait(1).to({alpha:0.474},0).wait(1).to({alpha:0.526},0).wait(1).to({alpha:0.579},0).wait(1).to({alpha:0.632},0).wait(1).to({alpha:0.684},0).wait(1).to({alpha:0.737},0).wait(1).to({alpha:0.789},0).wait(1).to({alpha:0.842},0).wait(1).to({alpha:0.895},0).wait(1).to({alpha:0.947},0).wait(1).to({alpha:1},0).to({_off:true},1).wait(75));
+	this.timeline.addTween(cjs.Tween.get(this.instance_7).wait(20).to({_off:false},0).wait(1).to({regY:27.3,x:559,y:50},0).wait(1).to({x:548.9},0).wait(1).to({x:539.4},0).wait(1).to({x:530.5},0).wait(1).to({x:522.1},0).wait(1).to({x:514.2},0).wait(1).to({x:506.8},0).wait(1).to({x:499.8},0).wait(1).to({x:493.3},0).wait(1).to({x:487.2},0).wait(1).to({x:481.4},0).wait(1).to({x:476},0).wait(1).to({x:471},0).wait(1).to({x:466.2},0).wait(1).to({x:461.7},0).wait(1).to({x:457.4},0).wait(1).to({x:453.4},0).wait(1).to({x:449.6},0).wait(1).to({x:446.1},0).wait(1).to({x:442.7},0).wait(1).to({x:439.4},0).wait(1).to({x:436.4},0).wait(1).to({x:433.4},0).wait(1).to({x:430.6},0).wait(1).to({x:428},0).wait(1).to({x:425.4},0).wait(1).to({x:422.9},0).wait(1).to({x:420.5},0).wait(1).to({x:418.2},0).wait(1).to({x:416},0).wait(1).to({x:413.8},0).wait(1).to({x:411.7},0).wait(1).to({x:409.6},0).wait(1).to({x:407.5},0).wait(1).to({x:405.5},0).wait(1).to({x:403.5},0).wait(1).to({x:401.6},0).wait(1).to({x:399.7},0).wait(1).to({x:397.7},0).wait(1).to({x:395.8},0).wait(1).to({x:394},0).wait(1).to({x:392.1},0).wait(1).to({x:390.2},0).wait(1).to({x:388.3},0).wait(1).to({x:386.5},0).wait(1).to({x:384.6},0).wait(1).to({x:382.8},0).wait(1).to({x:380.9},0).wait(1).to({x:379.1},0).wait(1).to({x:377.2},0).wait(1).to({x:375.4},0).wait(1).to({x:373.5},0).wait(1).to({x:371.7},0).wait(1).to({x:369.8},0).to({_off:true},1).wait(20));
+
+	// |
+	this.instance_8 = new lib.Symbol7();
+	this.instance_8.parent = this;
+	this.instance_8.setTransform(309.3,50,1,0.01,0,0,0,1.1,25);
+	this.instance_8._off = true;
+
+	this.shape_6 = new cjs.Shape();
+	this.shape_6.graphics.f("#FFFFFF").s().p("AgDBkIAAjHIAHAAIAADHg");
+	this.shape_6.setTransform(309.3,50,2.734,2.734);
+
+	this.shape_7 = new cjs.Shape();
+	this.shape_7.graphics.f("#FFFFFF").s().p("AgDBkIAAjHIAHAAIAADHg");
+	this.shape_7.setTransform(309.2,50,2.734,2.734);
+
+	this.timeline.addTween(cjs.Tween.get({}).to({state:[]}).to({state:[{t:this.instance_8}]},24).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.instance_8}]},1).to({state:[{t:this.shape_7},{t:this.shape_6}]},1).wait(20));
+	this.timeline.addTween(cjs.Tween.get(this.instance_8).wait(24).to({_off:false},0).wait(1).to({regY:27.3,scaleY:0.02},0).wait(1).to({scaleY:0.04},0).wait(1).to({scaleY:0.06},0).wait(1).to({scaleY:0.08},0).wait(1).to({scaleY:0.1},0).wait(1).to({scaleY:0.12},0).wait(1).to({scaleY:0.14},0).wait(1).to({scaleY:0.16},0).wait(1).to({scaleY:0.18},0).wait(1).to({scaleY:0.2},0).wait(1).to({scaleY:0.22},0).wait(1).to({scaleY:0.24},0).wait(1).to({scaleY:0.26},0).wait(1).to({scaleY:0.28},0).wait(1).to({scaleY:0.3},0).wait(1).to({scaleY:0.32},0).wait(1).to({scaleY:0.34},0).wait(1).to({scaleY:0.36},0).wait(1).to({scaleY:0.38},0).wait(1).to({scaleY:0.4},0).wait(1).to({scaleY:0.42},0).wait(1).to({scaleY:0.44},0).wait(1).to({scaleY:0.46},0).wait(1).to({scaleY:0.48},0).wait(1).to({scaleY:0.5},0).wait(1).to({scaleY:0.52},0).wait(1).to({scaleY:0.54},0).wait(1).to({scaleY:0.56},0).wait(1).to({scaleY:0.58},0).wait(1).to({scaleY:0.6},0).wait(1).to({scaleY:0.62,y:50.1},0).wait(1).to({scaleY:0.64,y:50},0).wait(1).to({scaleY:0.66},0).wait(1).to({scaleY:0.68},0).wait(1).to({scaleY:0.7},0).wait(1).to({scaleY:0.72},0).wait(1).to({scaleY:0.74},0).wait(1).to({scaleY:0.76},0).wait(1).to({scaleY:0.78},0).wait(1).to({scaleY:0.8},0).wait(1).to({scaleY:0.82,y:50.1},0).wait(1).to({scaleY:0.84},0).wait(1).to({scaleY:0.86},0).wait(1).to({scaleY:0.88,y:50},0).wait(1).to({scaleY:0.9},0).wait(1).to({scaleY:0.92},0).wait(1).to({scaleY:0.94},0).wait(1).to({scaleY:0.96},0).wait(1).to({scaleY:0.98},0).wait(1).to({scaleY:1},0).to({_off:true},1).wait(20));
+
+}).prototype = p = new cjs.MovieClip();
+p.nominalBounds = new cjs.Rectangle(314.7,83.2,571.7,54.6);
+// library properties:
+lib.properties = {
+	width: 600,
+	height: 121,
+	fps: 48,
+	color: "#000000",
+	opacity: 1.00,
+	webfonts: {},
+	manifest: [],
+	preloads: []
+};
+
+
+
+
+})(lib = lib||{}, images = images||{}, createjs = createjs||{}, ss = ss||{}, AdobeAn = AdobeAn||{});
+var lib, images, createjs, ss, AdobeAn;
 function loadedImg() {
 	var $loaderSite = $(".siteLoader"),
 	$lettersContainer = $(".letters-container"),
@@ -4385,68 +4753,69 @@ function loadedImg() {
 				}
 			},0)
 	}
+	canvasRender();
 	TimeLine
-		.set($point1, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($point2, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($point3, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($point4, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($point5, {
-			z: "400px",
-			autoAlpha: 0
-		})
-		.set($text, {
-			autoAlpha: 0
-		})
+		// .set($point1, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($point2, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($point3, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($point4, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($point5, {
+		// 	z: "400px",
+		// 	autoAlpha: 0
+		// })
+		// .set($text, {
+		// 	autoAlpha: 0
+		// })
 
-		.to($point1, 1.2, {
-			z: "-=400px",
-			autoAlpha: 1,
-			ease: Power2.easeOut
-		},0)
-		.to($point2, 1.2, {
-			z: "-=400px",
-			delay: 0.6,
+		// .to($point1, 1.2, {
+		// 	z: "-=400px",
+		// 	autoAlpha: 1,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($point2, 1.2, {
+		// 	z: "-=400px",
+		// 	delay: 0.6,
 
-			autoAlpha: 1,
-			ease: Power2.easeOut
-		},0)
-		.to($point3, 1.2, {
-			z: "-=400px",
-			autoAlpha: 1,
-			delay: 1.2,
-			ease: Power2.easeOut
-		},0)
-		.to($point4, 1.2, {
-			z: "-=400px",
-			autoAlpha: 1,
-			delay: 0.9,
-			ease: Power2.easeOut
-		},0)
-		.to($point5, 1.2, {
-			z: "-=400px",
-			autoAlpha: 1,
-			delay: 0.3,
-			ease: Power2.easeOut
-		},0)
-		.to($text, 1.2, {
-			autoAlpha: 1,
-			delay: 1.8,
-			ease: Sine.easeIn 
-		},0)
+		// 	autoAlpha: 1,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($point3, 1.2, {
+		// 	z: "-=400px",
+		// 	autoAlpha: 1,
+		// 	delay: 1.2,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($point4, 1.2, {
+		// 	z: "-=400px",
+		// 	autoAlpha: 1,
+		// 	delay: 0.9,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($point5, 1.2, {
+		// 	z: "-=400px",
+		// 	autoAlpha: 1,
+		// 	delay: 0.3,
+		// 	ease: Power2.easeOut
+		// },0)
+		// .to($text, 1.2, {
+		// 	autoAlpha: 1,
+		// 	delay: 1.8,
+		// 	ease: Sine.easeIn 
+		// },0)
 		.to($lettersContainer, 0.3, {
-			delay: 1,
+			delay: 3,
 			scaleX: 1,
 			scaleY: 0
 		})
@@ -4454,12 +4823,64 @@ function loadedImg() {
 			scaleX: 1,
 			scaleY: 1,
 			onComplete: function() {
-				frameAnim()
-				$timeline.fadeOut(100)
+				// frameAnim()
+				// $timeline.fadeOut(100)
 			}
 		})
 }
-
+var canvas, stage, exportRoot, anim_container, dom_overlay_container, fnStartAnimation;
+function canvasRender() {
+	canvas = document.getElementById("canvas");
+	anim_container = document.getElementById("animation_container");
+	dom_overlay_container = document.getElementById("dom_overlay_container");
+	handleComplete();
+}
+function handleComplete() {
+	//This function is always called, irrespective of the content. You can use the variable "stage" after it is created in token create_stage.
+	exportRoot = new lib._33161();
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);	
+	//Registers the "tick" event listener.
+	fnStartAnimation = function() {
+		createjs.Ticker.setFPS(lib.properties.fps);
+		createjs.Ticker.addEventListener("tick", stage);
+	}	    
+	//Code to support hidpi screens and responsive scaling.
+	function makeResponsive(isResp, respDim, isScale, scaleType) {		
+		var lastW, lastH, lastS=1;		
+		window.addEventListener('resize', resizeCanvas);		
+		resizeCanvas();		
+		function resizeCanvas() {			
+			var w = lib.properties.width, h = lib.properties.height;			
+			var iw = window.innerWidth, ih=window.innerHeight;			
+			var pRatio = window.devicePixelRatio || 1, xRatio=iw/w, yRatio=ih/h, sRatio=1;			
+			if(isResp) {                
+				if((respDim=='width'&&lastW==iw) || (respDim=='height'&&lastH==ih)) {                    
+					sRatio = lastS;                
+				}				
+				else if(!isScale) {					
+					if(iw<w || ih<h)						
+					sRatio = Math.min(xRatio, yRatio);				
+				}				
+			else if(scaleType==1) {					
+				sRatio = Math.min(xRatio, yRatio);				
+			}				
+			else if(scaleType==2) {					
+				sRatio = Math.max(xRatio, yRatio);				
+			}			
+		}			
+		canvas.width = w*pRatio*sRatio;			
+		canvas.height = h*pRatio*sRatio;
+		canvas.style.width = dom_overlay_container.style.width = anim_container.style.width =  w*sRatio+'px';				
+		canvas.style.height = anim_container.style.height = dom_overlay_container.style.height = h*sRatio+'px';
+		stage.scaleX = pRatio*sRatio;			
+		stage.scaleY = pRatio*sRatio;			
+		lastW = iw; lastH = ih; lastS = sRatio;		
+		}
+	}
+	makeResponsive(false,'both',false,1);	
+	fnStartAnimation();
+}
 function lazyImage(){
 	$('img').Lazy({
 		afterLoad: function(){
