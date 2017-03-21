@@ -497,14 +497,14 @@ body
 		// 				animation: loading-scale 2s cubic-bezier(0.645, 0.045, 0.355, 1) 0s infinite normal none
 	.lines-container
 		position: absolute
-		width: 108px
+		width: 64px
 		height: 64px
-		background-image: url(../img/icons/logo-loader.jpg)
+		background-image: url(../img/loader.svg)
 		background-size: cover
 		top: 50%
 		left: 50%
-		margin: -32px 0 0 -64px
-		animation: pulse 3s ease 0s infinite both
+		margin: -32px 0 0 -32px
+		animation: pulse 0.7s linear 0s infinite
 		will-change: transform
 		// position: absolute
 		// width: 70px
@@ -542,13 +542,9 @@ body
 		// 			height: 100%
 @keyframes pulse
 	0%
-		transform: scale(1)
-
-	50%
-		transform: scale(1.1)
-
+		transform: rotate(0deg)
 	100%
-		transform: scale(1)
+		transform: rotate(360deg)
 .siteLoader
 	position: fixed
 	top: 0

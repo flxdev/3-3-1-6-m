@@ -99,8 +99,8 @@ function loadedImg() {
 			scaleX: 1,
 			scaleY: 1,
 			onComplete: function() {
-				// frameAnim()
-				// $timeline.fadeOut(100)
+				frameAnim()
+				$timeline.fadeOut(100)
 			}
 		})
 }
