@@ -89,9 +89,13 @@ body
 				content: '/'
 				font-family: "Book"
 				position: absolute
-				top: -15px
-				left: -19px
+				// top: -5px
+				// top: 0
+				// +rem(top, -17px)
+				+rem(left, -19px)
 				+rem(font-size, 16px)
+				+hdpi(2.1)				
+					// +rem(top, -5px)
 		+rem(margin-left, 25px)
 		position: relative
 		&:first-of-type
@@ -105,6 +109,7 @@ body
 			div
 				opacity: 0.8
 	.breadcrumbs-item
+		display: inline
 		&.home
 			div 
 				+rem(width, 12px)
@@ -235,6 +240,9 @@ body
 		color: $black
 		+rm(480)
 			+rem(font-size, 45px)
+		.intro-link
+			display: block
+
 .projects
 	position: relative
 	height: 100%
@@ -278,7 +286,7 @@ body
 				// top: 50%
 				// left: 50%
 				// transform: translate(-50%,-50%)
-				filter: grayscale(100%) brightness(0.5) contrast(112%)
+				// filter: grayscale(100%) brightness(0.5) contrast(112%)
 			.eye
 				+rem(width, 80px)
 				+rem(height, 50px)
@@ -400,6 +408,10 @@ body
 		position: relative
 		z-index: 2
 		white-space: nowrap
+		.btn
+			background-color: $white
+			span
+				color: $black
 .page-menu__soc
 	display: inline-block
 	vertical-align: middle
@@ -1350,3 +1362,50 @@ body
 	// 	.projects-item
 	// 		.cover
 	// 			height: 100%
+.section-projects
+	.section-projects_item
+		position: relative
+		display: block
+		+rem(margin-bottom, 25px)
+		.section-projects_image
+			padding-bottom: 65.52%
+			position: relative
+			.img
+				position: absolute
+				top: 0
+				width: 100%
+				height: 100%
+				left: 0
+				background-size: cover
+				background-position: 50% 50%
+				background-repeat: no-repeat
+		.section-projects_info
+			position: absolute
+			+rem(bottom, 15px)
+			+rem(left, 15px)
+			+rem(right, 15px)
+			.projects-name
+				span, a
+					font-family: Medium
+					+rem(font-size, 16px)
+					+rem(letter-spacing, 2px)
+					color: $white
+					line-height: 1.2
+					+rM(480, 780)
+						+rem(font-size, 26px)
+					+rm(780)
+						+rem(font-size, 32px)
+				a
+					display: block
+					&:not(:last-child)
+						+rem(margin-bottom, 10px)
+.projects-hash
+	+rem(margin, 0 -10px 40px -10px)
+	white-space: normal
+	.projects-hash_item
+		display: inline-block
+		+rem(font-size, 10px)
+		text-transform: uppercase
+		color: $black
+		+rem(letter-spacing, 2px)
+		+rem(padding, 5px 10px)

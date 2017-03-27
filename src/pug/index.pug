@@ -12,24 +12,50 @@ block content
 				.content-wrapper
 					.content-head
 						.intro
-							.intro-text Architecture. Interior. Design.
+							.intro-text 
+								a.intro-link.ajax-trigger
+									span Architecture
+								a.intro-link.ajax-trigger
+									span Interior
+								a.intro-link.ajax-trigger
+									span Design
 					.content-body
-						.projects
-							mixin projects(image, name)
-								a.projects-item.ajax-trigger(href="#")
-									.projects-image
-										img(src=image)
-									.projects-info
-											.projects-name
-												span #{name}
-							+projects("img/main/1_2.jpg", "Café de Paris")
-							+projects("img/main/6_2.jpg", "Private house #03")
-							+projects("img/main/10_2.jpg", "Café de Paris")
-							+projects("img/main/15_2.jpg", "Private house #04")
-							+projects("img/main/19_2.jpg", "Café de Paris")
-							+projects("img/main/23_2.jpg", "Private house #05")
-							+projects("img/main/28_2.jpg", "Café de Paris")
-							+projects("img/main/30_2.jpg", "Private house #06")
+						.section-projects
+							a.section-projects_item.ajax-trigger(href="#")
+								.section-projects_image
+									.img(style="background-image:url(img/architecture.jpg)")
+								.section-projects_info
+									.projects-name
+										span Архитектурное проектирование
+							.section-projects_item
+								.section-projects_image
+									.img(style="background-image:url(img/interior.jpg)")
+								.section-projects_info
+									.projects-name
+										a.ajax-trigger(href="#") Жилые
+										a.ajax-trigger(href="#") Общественные
+							a.section-projects_item.ajax-trigger(href="#")
+								.section-projects_image
+									.img(style="background-image:url(img/design.jpg)")
+								.section-projects_info
+									.projects-name
+										span Предметный дизайн
+						//- .projects
+						//- 	mixin projects(image, name)
+						//- 		a.projects-item.ajax-trigger(href="#")
+						//- 			.projects-image
+						//- 				img(src=image)
+						//- 			.projects-info
+						//- 					.projects-name
+						//- 						span #{name}
+						//- 	+projects("img/main/1_2.jpg", "Café de Paris")
+						//- 	+projects("img/main/6_2.jpg", "Private house #03")
+						//- 	+projects("img/main/10_2.jpg", "Café de Paris")
+						//- 	+projects("img/main/15_2.jpg", "Private house #04")
+						//- 	+projects("img/main/19_2.jpg", "Café de Paris")
+						//- 	+projects("img/main/23_2.jpg", "Private house #05")
+						//- 	+projects("img/main/28_2.jpg", "Café de Paris")
+						//- 	+projects("img/main/30_2.jpg", "Private house #06")
 				- var name = "Portfolio"
 				include includes/_footer
 		- var current = "Recent projects"
