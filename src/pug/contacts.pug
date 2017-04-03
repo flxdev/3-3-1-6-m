@@ -11,12 +11,13 @@ block content
 				include includes/_header
 				.content-wrapper
 					.content-head
-						.text-container
+						.text-container.contacts-container
 							.title Contact us
 							.subtitle Call. Write. Come. 
 							.descr
 								p Kuibysheva 33|16 Kiseleva, Minsk
-								p 8 029 681-26-83
+								p 
+									a(class="topper" href="#") 8 029 681-26-83
 								p Buro@3316.by
 								.page-menu__soc
 									a.page-menu__soc-btn(href="#")
@@ -33,6 +34,8 @@ block content
 					.content-body
 						.maps-container
 							.maps#map
+							.go-to-map
+								a(href="https://www.google.ru/maps/place/53%C2%B054'48.0%22N+27%C2%B034'04.6%22E/@53.9132384,27.5681744,18z/data=!4m5!3m4!1s0x0:0x0!8m2!3d53.91333!4d27.567941" target="_blank" rel="nofollow") Посмотреть на карте
 						script(type='text/javascript').
 							$(gMaps)
 				- var name = "services"

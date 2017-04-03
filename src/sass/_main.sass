@@ -85,21 +85,24 @@ body
 	li
 		display: inline
 		&:not(:first-of-type)
-			&::after
-				content: '/'
-				font-family: "Book"
-				position: absolute
-				// top: -5px
-				// top: 0
-				// +rem(top, -17px)
-				+rem(left, -19px)
-				+rem(font-size, 16px)
-				+hdpi(2.1)				
-					// +rem(top, -5px)
-		+rem(margin-left, 25px)
+			.breadcrumbs-item
+				position: relative
+				&::before
+					content: '/'
+					font-family: "Book"
+					position: relative
+					// top: -5px
+					// top: 0
+					// +rem(top, -17px)
+					// +rem(left, -5px)
+					+rem(font-size, 16px)
+					+hdpi(2.1)				
+						// +rem(top, -5px)
+		+rem(padding-left, 0)
 		position: relative
 		&:first-of-type
 			margin-left: 0
+			padding-left: 0
 	a
 		transition: opacity 0.3s ease
 		div
@@ -132,11 +135,16 @@ body
 	+rem(right, -15px)
 	span
 		font-family: "Medium"
-		+rem(font-size, 15px)
+		+rem(font-size, 10px)
 		color: $white
 		+rem(line-height, 63px)
 		text-transform: uppercase
 		+rem(letter-spacing, 5px)
+		white-space: nowrap
+		text-overflow: ellipsis
+		overflow: hidden
+		margin: 0 10px
+		display: inherit
 .footer
 	position: absolute
 	bottom: 0
@@ -442,7 +450,8 @@ body
 		color: $black
 		text-transform: uppercase
 .maps-container
-	.gm-style-cc, a
+	position: relative
+	.gm-style-cc, #map a
 		display: none!important
 	.zoomIn
 		background-color: $black
@@ -460,6 +469,17 @@ body
 			color: $white
 			font-family: "Book"
 			line-height: 25px
+	.go-to-map
+		position: absolute
+		bottom: 0
+		z-index: 10
+		a
+			+rem(font-size, 10px)
+			color: $white
+			+rem(letter-spacing, 1.9px)
+			text-transform: uppercase
+			+rem(padding, 15px 10px)
+			display: inline-block
 .maps-container, .maps
 	width: 100%
 	+rem(height, 430px)
@@ -735,6 +755,15 @@ body
 				background-color: $black
 				span 
 					color: $white
+	&.contacts-container
+		.descr
+			p
+				margin-bottom: 0
+				a
+					color: $black
+					&.topper
+						+rem(margin-top, 20px)
+						display: inline-block
 .content-head
 	.text-container
 		.descr
@@ -839,9 +868,6 @@ body
 				opacity: 0
 				transform: translate(0, 20px)
 				transition: transform 0.5s ease, opacity 1.5s ease
-				&:hover
-					.image__cover
-						opacity: 0.5
 				.image__cover
 					transition: opacity 0.3s ease
 					img
@@ -1398,7 +1424,7 @@ body
 						+rem(font-size, 32px)
 				a
 					display: block
-					color: $black
+					color: $white
 					&:not(:last-child)
 						+rem(margin-bottom, 10px)
 .projects-hash
@@ -1411,3 +1437,13 @@ body
 		color: $black
 		+rem(letter-spacing, 2px)
 		+rem(padding, 5px 10px)
+		position: relative
+		&.active
+			&::after
+				content: ""
+				height: 1px
+				background-color: $black
+				left: 5px
+				right: 5px
+				top: 50%
+				position: absolute

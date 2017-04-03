@@ -4747,9 +4747,8 @@ function loadedImg() {
 					setTimeout(function(){
 						$(".out").addClass("load-page dom");
 					},100);
-					document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-					var pull = new PullMobile;
-					pull.init();
+					// document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+					
 				}
 			},0)
 	}
@@ -4967,10 +4966,27 @@ function iso() {
 		mainScrollInit.update();
 	})
 }
+function isPassive() {
+	var supportsPassiveOption = false;
+	try {
+		addEventListener("test", null, Object.defineProperty({}, 'passive', {
+			get: function () {
+				supportsPassiveOption = true;
+			}
+		}));
+	} catch(e) {}
+	return supportsPassiveOption;
+}
 window.onload =  function(){
 	mainScrollInit = new customScroll(mainScroll);
 	scrollPopupInit = new customScroll(scrollPopup);
 	scrollModalInit = new customScroll(scrollModal);
+	document.addEventListener('touchmove', function (e) { e.preventDefault(); }, isPassive() ? {
+		capture: false,
+		passive: false
+	} : false);
+	var pull = new PullMobile;
+		pull.init();
 }
 // document.addEventListener("DOMContentLoaded", function(){
 // 	mainScrollInit = new customScroll(mainScroll);
@@ -5064,7 +5080,7 @@ function initialize(){
 	var mapOptions = {
 		zoom: 14,
 		disableDefaultUI: true,
-		scrollwheel: true,
+		scrollwheel: false,
 		panControl: true,
 		zoomControl: false,
 		zoomControlOptions: {
@@ -5100,24 +5116,25 @@ function initialize(){
 
   	zoomControlDiv.index = 1;
 	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(zoomControlDiv);
+	map.setOptions({ 'draggable': false });
 
-	$(".maps-container").on("click", function(e){
-		map.setOptions({ 'draggable': true });
-		mainScrollInit.destroy();
-		e.stopPropagation();
-	});
-	$(".wrapper").on("click", function(){
-		if($(this).find(">.iScrollVerticalScrollbar").length){
-			return false;
-		} else {
-			var top = $(".wrapper").find(">.scroll").offset().top;
-			console.log(top);
-			mainScrollInit.init();
-			mainScrollInit.scrollToElement(top);
-			map.setOptions({ 'draggable': false });
-		}
+	// $(".maps-container").on("click", function(e){
+	// 	map.setOptions({ 'draggable': true });
+	// 	mainScrollInit.destroy();
+	// 	e.stopPropagation();
+	// });
+	// $(".wrapper").on("click", function(){
+	// 	if($(this).find(">.iScrollVerticalScrollbar").length){
+	// 		return false;
+	// 	} else {
+	// 		var top = $(".wrapper").find(">.scroll").offset().top;
+	// 		console.log(top);
+	// 		mainScrollInit.init();
+	// 		mainScrollInit.scrollToElement(top);
+	// 		map.setOptions({ 'draggable': false });
+	// 	}
 		
-	});
+	// });
 
 };
 
